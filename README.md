@@ -79,6 +79,7 @@ Layers: **presentation** (web, admin) → **business logic** (NestJS services + 
 | C | [Database design](docs/03-database-design.md): ERD, entities, storage and retrieval |
 | D | [Testing](docs/04-testing.md): test cases, pattern tests, error handling, results |
 | E | [User guide](docs/05-user-guide.md): installation, features, demo data |
+| — | [Defense presentation](docs/Synteco_Demo_Presentation.pptx): 5 slides with speaker notes |
 
 ## Repository layout
 
