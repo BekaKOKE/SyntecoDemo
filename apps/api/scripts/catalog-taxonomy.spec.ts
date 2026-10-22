@@ -49,8 +49,12 @@ describe('catalog taxonomy classifier', () => {
       .toEqual(['safety', 'fire protection']);
   });
 
-  it('classifies every source catalog row or handles it with an explicit curated decision', () => {
-    const dataDir = path.resolve(__dirname, '..', '..', '..', 'data');
+  // The raw supplier exports (data/Grainger*.json, ~13 MB) are not in git;
+  // run this check only where they are present.
+  const dataDir = path.resolve(__dirname, '..', '..', '..', 'data');
+  const itWithSourceData = fs.existsSync(path.join(dataDir, 'Grainger.json')) ? it : it.skip;
+
+  itWithSourceData('classifies every source catalog row or handles it with an explicit curated decision', () => {
     const rows = ['Grainger.json', 'Grainger_batch2.json'].flatMap(file =>
       JSON.parse(fs.readFileSync(path.join(dataDir, file), 'utf8')) as Array<{
         variant_id?: string;

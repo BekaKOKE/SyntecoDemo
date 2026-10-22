@@ -15,7 +15,7 @@
     "db:migrate": "prisma migrate dev",
     "db:migrate:prod": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:demo": "prisma migrate deploy && prisma db execute --file prisma/demo-data/catalog.sql --schema prisma/schema.prisma && tsx prisma/seed-demo.ts",
+    "db:demo": "prisma generate && prisma migrate deploy && prisma db execute --file prisma/demo-data/catalog.sql --schema prisma/schema.prisma && tsx prisma/seed-demo.ts",
     "db:set-admin": "tsx prisma/set-admin.ts",
     "db:create-manager": "tsx prisma/create-manager.ts",
     "db:set-password": "tsx prisma/set-password.ts",

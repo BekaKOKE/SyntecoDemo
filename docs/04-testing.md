@@ -150,6 +150,8 @@ Tests:       64 passed, 64 total
 | Original Synteco suites (unit + E2E) | 247 | 247 | 0 |
 | **Total** | **326** | **326** | **0** |
 
+In a fresh clone the original `scripts/catalog-taxonomy.spec.ts` check that reads the raw supplier exports (`data/Grainger*.json`, ~13 MB, not in git) is skipped automatically, so the unit run shows `261 passed, 1 skipped`.
+
 Two original E2E expectations were outdated relative to the current code and were corrected. Registration now requires personal-data consent, and `/auth/refresh` with an empty body returns 401 (no token) instead of 400.
 
 ## 6. Manual UI test (storefront + admin)

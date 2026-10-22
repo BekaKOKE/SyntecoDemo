@@ -41,11 +41,13 @@ Details are in the [user guide](docs/05-user-guide.md).
 ## Tests
 
 ```bash
-pnpm --filter @synteco/api test        # 262 unit tests — no database needed
+pnpm --filter @synteco/api test        # 262 unit tests — no database needed*
 pnpm --filter @synteco/api test:e2e    # 64 API end-to-end tests — needs `pnpm demo:setup`
 ```
 
 Latest run: **326 / 326 passed** ([results](docs/test-results/)).
+
+\* One original catalogue-import test needs the raw supplier exports (`data/Grainger*.json`, not in git) and is skipped automatically without them, so a fresh clone reports `261 passed, 1 skipped`.
 
 ## Design patterns in the code
 
