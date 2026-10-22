@@ -1,0 +1,40 @@
+flowchart LR
+  Guest((Guest))
+  Customer((Customer))
+  Manager((Manager))
+  Admin((Administrator))
+  Kaspi[[Kaspi Pay SDK<br/>simulated]]
+  Halyk[[Halyk ePay SDK<br/>simulated]]
+
+  subgraph Synteco Demo
+    UC1([UC-1 Browse & search catalogue])
+    UC2([UC-2 Manage cart])
+    UC3([UC-3 Register / log in])
+    UC4([UC-4 Checkout: quote, promo code, services])
+    UC5([UC-5 Pay for order])
+    UC6([UC-6 Track orders & history])
+    UC7([UC-7 Cancel order])
+    UC8([UC-8 Read notifications])
+    UC9([UC-9 Process order statuses])
+    UC10([UC-10 Manage promotions & strategies])
+    UC11([UC-11 Manage catalogue & stock])
+  end
+
+  Guest --- UC1
+  Guest --- UC2
+  Guest --- UC3
+  Customer --- UC1
+  Customer --- UC2
+  Customer --- UC4
+  Customer --- UC5
+  Customer --- UC6
+  Customer --- UC7
+  Customer --- UC8
+  Manager --- UC9
+  Manager --- UC6
+  Admin --- UC9
+  Admin --- UC10
+  Admin --- UC11
+  UC4 -. include .-> UC5
+  UC5 --- Kaspi
+  UC5 --- Halyk

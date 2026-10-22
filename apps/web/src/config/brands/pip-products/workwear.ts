@@ -1,0 +1,70 @@
+import type { BrandProduct } from '../types';
+import { buildProducts, type ProductRow, type ProductTables } from './build';
+
+/**
+ * PIP Workwear — the Bisley(R) X-Airflow(TM), Essentials and Performance
+ * ranges, mirrored from https://us.pipglobal.com/en/products/?scID=2588
+ *
+ * Names and catalog numbers stay in English: buyers search by PIP
+ * nomenclature. Only the descriptions are localised.
+ *
+ * Generated — do not edit by hand.
+ */
+
+const SC_ID = 2588;
+
+const TABLES: ProductTables = {
+  /** Russian card copy, shared between products of the same family. */
+  descriptions: {
+    125: "Дополнительная заметность там, где соответствие ANSI не требуется: сбор тележек на парковке, выгул собак, парковщики, бегуны, водители доставки, работники зон отдыха.",
+    127: "Для строительства, коммунальных служб, судоверфей — везде, где нужна сигнальная одежда.",
+    299: "Для дорожных строителей, геодезических бригад, коммунальных служб и аварийных подразделений.",
+    300: "Дышащая одежда для сильной жары решает, как человек себя чувствует и работает весь день. Лазерная перфорация панелей в самых горячих зонах делает Bisley® X-Airflow™ самой продуманной спецодеждой на рынке по отводу тепла.",
+    301: "Для дорожных строителей, геодезических бригад, коммунальных служб, работников железной дороги и метро, аварийных подразделений.",
+    302: "Для горнодобывающих бригад, работников нефтегаза, тяжёлого строительства и везде, где нужна сигнальная одежда.",
+    303: "Для горнодобывающих бригад, работников нефтегаза и везде, где нужна сигнальная одежда с головы до ног.",
+    304: "Крой специально под женскую фигуру. Для горнодобывающих бригад, работников нефтегаза, тяжёлого строительства и везде, где нужна сигнальная одежда.",
+    305: "Крой специально под женскую фигуру. Для горнодобывающих бригад, работников нефтегаза и везде, где нужна сигнальная одежда с головы до ног.",
+  },
+  /** Russian application tags. */
+  applications: {
+    0: [],
+  },
+};
+
+const build = (rows: ProductRow[]): BrandProduct[] => buildProducts(SC_ID, TABLES, rows);
+
+/** ccID 11757 — 26 products. */
+export const workApparel: BrandProduct[] = build([
+  [11757, "144368", "Bisley® X-Airflow™", "ANSI Type R Class 3 Long Sleeve Work Shirt with Navy Bottom", "313M6491H", "/archive/pim/300/10/313M6491H-YN---OMF.jpg", 299, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "148564", "Bisley® X-Airflow™", "Stretch Ripstop Vented Work Pants", "411M6150", "/archive/pim/300/14/411M6150--NV---OMF.jpg", 300, 0, "30W x 30L, 30W x 32L, 30W x 34L, 30W x 36L, 32W x 30L, 32W x 32L, 32W x 34L, 32W x 36L, 34W x 30L, 34W x 32L, 34W x 34L, 34W x 36L, 36W x 30L, 36W x 32L, 36W x 34L, 36W x 36L, 38W x 30L, 38W x 32L, 38W x 34L, 38W x 36L, 40W x 30L, 40W x 32L, 40W x 34L, 40W x 36L, 42W x 30L, 42W x 32L, 42W x 34L, 44W x 30L, 44W x 32L, 44W x 34L, 46W x 30L, 46W x 32L, 48W x 30L, 48W x 32L, 50W x 30L, 50W x 32L", "Gray, Navy, Tan", 1],
+  [11757, "148414", "Bisley® X-Airflow™", "Long Sleeve Ripstop Work Shirt", "400M6490", "/archive/pim/300/25/400M6490--GR---OMF.jpg", 300, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Gray, Navy, Tan", 1],
+  [11757, "147663", "Bisley® Essentials", "ANSI Type R Class 2 Short Sleeve T-Shirt with Navy Bottom", "312M1118T", "/archive/pim/300/11/312M1118T-YN---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL, 7XL, 8XL, 9XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "148660", "Bisley® X-Airflow™", "Women's Stretch Ripstop Vented Work Pants", "411W6150", "/archive/pim/300/25/411W6150-TN---OMF.jpg", 300, 0, "2S, 2R, 2T, 4S, 4R, 4T, 6S, 6R, 6T, 8S, 8R, 8T, 10S, 10R, 10T, 12S, 12R, 12T, 14S, 14R, 14T, 16S, 16R, 16T, 18S, 18R, 18T, 20S, 20R, 20T, 22S, 22R, 24S, 24R", "Gray, Navy, Tan", 1],
+  [11757, "144278", "Bisley® X-Airflow™", "ANSI Type R Class 3 Long Sleeve Work Shirt with X-Back", "313M6490X", "/archive/pim/300/10/313M6490X-O---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144561", "Bisley® Essentials", "ANSI Type R Class 3 Short Sleeve T-Shirt", "313M1118H", "/archive/pim/300/11/313M1118H-Y---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144519", "Bisley® Essentials", "ANSI Type R Class 3 Long Sleeve Shirt with Navy Bottom", "313M6118T", "/archive/pim/300/11/313M6118T-ON---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL, 7XL, 8XL, 9XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "154886", "Bisley® Performance", "ANSI Type R Class 3 Vented Long Sleeve Button Down - Industrial Wash Durable", "312M6367H", "/archive/pim/300/34/312M6367H_YN_1.jpg", 302, 0, "S, ST, M, MT, L, LT, XL, XLT, 2XL, 2XLT, 3XL, 3XLT, 4XL, 4XLT, 5XL, 5XLT, 6XL, 6XLT", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144445", "Bisley® Essentials", "Non-ANSI Short Sleeve T-Shirt", "310M1118", "/archive/pim/300/10/310M1118-Y---OMF.jpg", 125, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144543", "Bisley® Essentials", "ANSI Type R Class 3 Women's Long Sleeve Shirt with Navy Bottom", "313W6118T", "/archive/pim/300/10/313W6118T-ON---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "155246", "Bisley® Performance", "ANSI Type R Class 2 Vented Coverall - Industrial Wash Durable", "314M6369H", "/archive/pim/300/34/314M6369H_YN_1.jpg", 303, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL, 6XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "155016", "Bisley® Performance", "Navy Taped Cargo Pant - Industrial Wash Durable", "318M6368T", "/archive/pim/300/34/318M6368T_NV_1.jpg", 302, 0, "30W x 30L, 30W x 32L, 30W x 34L, 30W x 36L, 32W x 30L, 32W x 32L, 32W x 34L, 32W x 36L, 34W x 30L, 34W x 32L, 34W x 34L, 34W x 36L, 36W x 30L, 36W x 32L, 36W x 34L, 36W x 36L, 38W x 30L, 38W x 32L, 38W x 34L, 38W x 36L, 40W x 30L, 40W x 32L, 40W x 34L, 40W x 36L, 42W x 30L, 42W x 32L, 42W x 34L, 44W x 30L, 44W x 32L, 44W x 34L, 46W x 30L, 46W x 32L, 48W x 30L, 48W x 32L, 50W x 30L, 50W x 32L", "Navy", 1],
+  [11757, "144364", "Bisley® X-Airflow™", "ANSI Type R Class 3 Women's Long Sleeve Work Shirt with X-Back", "313W6490X", "/archive/pim/300/10/313W6490X-O---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144597", "Bisley® Essentials", "ANSI Type R Class 3 Long Sleeve Shirt with X-Back", "313M6118X", "/archive/pim/300/11/313M6118X-O---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "148457", "Bisley® X-Airflow™", "Women's Long Sleeve Ripstop Work Shirt", "400W6490", "/archive/pim/300/25/400W6490-NV---OMF.jpg", 300, 0, "S, M, L, XL, 2XL, 3XL, 4XL", "Gray, Navy, Tan", 1],
+  [11757, "154955", "Bisley® Performance", "Women's Navy Taped Cargo Pant - Industrial Wash Durable", "318W6368T", "/archive/pim/300/34/318W6368T_NV_1.jpg", 304, 0, "2S, 2R, 2T, 4S, 4R, 4T, 6S, 6R, 6T, 8S, 8R, 8T, 10S, 10R, 10T, 12S, 12R, 12T, 14S, 14R, 14T, 16S, 16R, 16T, 18S, 18R, 18T, 20S, 20R, 20T, 22S, 22R, 22T, 24S, 24R, 24T", "Navy", 1],
+  [11757, "144478", "Bisley® Essentials", "Non-ANSI Women's Long Sleeve Shirt", "310W6118", "/archive/pim/300/10/310W6118-O---OMF.jpg", 125, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144607", "Bisley® Essentials", "ANSI Type R Class 3 Short Sleeve Shirt with X-Back", "313M1118X", "/archive/pim/300/11/313M1118X-Y---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144511", "Bisley® Essentials", "ANSI Type R Class 2 Women's Short Sleeve T-Shirt with Navy Bottom", "312W1118T", "/archive/pim/300/10/312W1118T-YN---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "154869", "Bisley® Performance", "ANSI Type R Class 2 Women's Vented Coverall - Industrial Wash Durable", "314W6369H", "/archive/pim/300/34/314W6369H_YN_1.jpg", 305, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "154901", "Bisley® Performance", "ANSI Type R Class 2 Women's Vented Long Sleeve Button Down - Industrial Wash Durable", "312W6367H", "/archive/pim/300/34/312W6367H_YN_1.jpg", 304, 0, "XS, S, M, L, XL, 2XL, 3XL, 3XLT, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144582", "Bisley® Essentials", "ANSI Type R Class 2 Women's Short Sleeve T-Shirt", "313W1118H", "/archive/pim/300/10/313W1118H-Y---OMF.jpg", 127, 0, "S, M, L, XL, 2XL, 3XL, 4XL, 5XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144574", "Bisley® Essentials", "ANSI Type R Class 2 Women's Short Sleeve Shirt with X-Back", "313W1118X", "/archive/pim/300/10/313W1118X-Y---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144624", "Bisley® Essentials", "ANSI Type R Class 3 Women's Long Sleeve Shirt with X-Back", "313W6118X", "/archive/pim/300/10/313W6118X-O---OMF.jpg", 301, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+  [11757, "144447", "Bisley® Essentials", "Non-ANSI Women's Short Sleeve T-Shirt", "310W1118", "/archive/pim/300/10/310W1118-Y---OMF.jpg", 125, 0, "S, M, L, XL, 2XL, 3XL", "Hi-Vis Orange, Hi-Vis Yellow", 1],
+]);
+
+/** Every product of this category, keyed by PIP ccID. */
+export const pipWorkwear: Record<string, BrandProduct[]> = {
+  '11757': workApparel,
+};

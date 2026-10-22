@@ -1,0 +1,375 @@
+PASS src/modules/auth/auth.service.spec.ts
+  Auth — Password & Token Logic
+    Password hashing (bcrypt)
+      √ should hash password and produce string > 30 chars (232 ms)
+      √ should verify correct password (280 ms)
+      √ should reject wrong password (240 ms)
+      √ should produce different salts for same password (639 ms)
+      √ should respect salt rounds — higher = slower (739 ms)
+    RBAC roles
+      √ should have exactly 6 roles (7 ms)
+      √ should recognize role: super_admin (1 ms)
+      √ should recognize role: admin
+      √ should recognize role: manager (1 ms)
+      √ should recognize role: customer_admin (1 ms)
+      √ should recognize role: customer_buyer
+      √ should recognize role: customer_viewer
+      √ should have super_admin as highest privilege (1 ms)
+      √ should have customer_viewer as lowest privilege
+      √ should reject invalid role (1 ms)
+
+PASS src/modules/admin/admin.service.spec.ts (5.311 s)
+  AdminService
+    getStats
+      √ should return dashboard stats (57 ms)
+      √ should exclude cancelled and returned orders from revenue (9 ms)
+      √ should return 0 revenue when _sum is null (6 ms)
+    getRecentOrders
+      √ should return recent orders with default limit of 10 (5 ms)
+      √ should respect custom limit (4 ms)
+      √ should select only summary fields (4 ms)
+
+PASS src/modules/users/users.service.spec.ts (5.436 s)
+  UsersService
+    findAll
+      √ should return paginated users without password hashes (56 ms)
+      √ should apply pagination correctly (11 ms)
+      √ should sort by createdAt descending (10 ms)
+      √ should select only safe fields (no passwordHash) (8 ms)
+      √ should handle empty user list (10 ms)
+    findById
+      √ should return user without passwordHash (4 ms)
+      √ should include company information when available (3 ms)
+      √ should throw NotFoundException for missing user (34 ms)
+
+PASS src/modules/brands/brands.service.spec.ts (5.362 s)
+  BrandsService
+    findAll
+      √ should return all brands with product counts (53 ms)
+      √ should return brands sorted by name ascending (9 ms)
+      √ should filter by search term (5 ms)
+      √ should not filter when search is empty (4 ms)
+      √ should return empty array when no brands exist (4 ms)
+    create
+      √ should create a brand with generated slug (4 ms)
+      √ should throw ConflictException when brand name exists (35 ms)
+      √ should generate URL-safe slugs from Cyrillic names (5 ms)
+      √ should handle special characters in brand names (9 ms)
+      √ should store website URL when provided (5 ms)
+
+PASS src/modules/pricing/pricing.service.spec.ts (5.525 s)
+  PricingService
+    resolvePrice
+      √ should return retail price when no customer and no tiers (56 ms)
+      √ should use product price when no salePrice (7 ms)
+      √ should throw NotFoundException for missing product (52 ms)
+      √ should resolve contract price for customer with contract (6 ms)
+      √ should fall back to volume tier when no contract price found (5 ms)
+      √ should use volume tier when no customer provided (4 ms)
+      √ should select best volume tier for quantity (4 ms)
+      √ should return retail when no tiers match quantity (4 ms)
+      √ should calculate discount percent correctly (5 ms)
+      √ should handle customer without a contract (4 ms)
+      √ should handle customer not linked to any company (3 ms)
+    resolvePriceEnriched
+      √ should return enriched price with product info (4 ms)
+      √ should throw NotFoundException for missing product (3 ms)
+    getTiers
+      √ should return all price tiers for a product (4 ms)
+    upsertTier
+      √ should create a new price tier (5 ms)
+      √ should update existing tier when found (4 ms)
+      √ should handle null contractId (3 ms)
+    seedVolumeTiers
+      √ should be no-op when product not found (4 ms)
+      √ should create 4 volume tiers (4 ms)
+
+PASS src/modules/inventory/inventory.service.spec.ts (5.607 s)
+  InventoryService
+    getStock
+      √ should return stock for a valid product (60 ms)
+      √ should throw NotFoundException for missing product (57 ms)
+      √ should return inStock=false when totalAvailable is 0 (5 ms)
+      √ should use default reorderPoint when no stock records exist (5 ms)
+    getBulkAvailability
+      √ should aggregate stock across warehouses per product (7 ms)
+      √ should return empty map for products with no stock (6 ms)
+    reserve
+      √ should reserve stock when available quantity is sufficient (7 ms)
+      √ should throw when warehouse not found (5 ms)
+      √ should throw BadRequestException when insufficient stock (5 ms)
+      √ should work with a transaction client (4 ms)
+    release
+      √ should release reserved stock (4 ms)
+      √ should cap release at current reserved amount (3 ms)
+      √ should be no-op when stock record not found (4 ms)
+      √ should work with a transaction client (3 ms)
+    deduct
+      √ should deduct quantity and reserved after shipment (3 ms)
+      √ should throw when reserved < quantity (6 ms)
+      √ should throw when quantity < requested (4 ms)
+      √ should throw when stock not found (3 ms)
+      √ should work with a transaction client (4 ms)
+    transfer
+      √ should transfer stock between warehouses (4 ms)
+      √ should throw when source has insufficient stock (3 ms)
+      √ should throw when source stock not found (4 ms)
+      √ should create stock at target warehouse if it does not exist (4 ms)
+    reserveAcrossWarehouses
+      √ should reserve from warehouse with most stock first (8 ms)
+      √ should throw when total available < requested (5 ms)
+      √ should work with transaction client (3 ms)
+      √ should split reservation across multiple warehouses (4 ms)
+    releaseAllReserved
+      √ should release reserved stock across warehouses (5 ms)
+      √ should release from warehouses with most reserved first (3 ms)
+      √ should work with transaction client (3 ms)
+    getLowStockAlerts
+      √ should return products below reorder point (5 ms)
+      √ should sort alerts by available ascending (3 ms)
+      √ should return empty array when no products are low (3 ms)
+
+PASS src/modules/admin/inquiries/inquiries.service.spec.ts (6.034 s)
+  InquiriesService
+    create
+      √ should create an inquiry with auto-generated number (66 ms)
+      √ should calculate itemCount and totalAmount from items (13 ms)
+      √ should set SLA based on priority (7 ms)
+      √ should default to normal priority (4 ms)
+      √ should generate sequential inquiry numbers (4 ms)
+    findAll
+      √ should return paginated inquiries (4 ms)
+      √ should filter by status (6 ms)
+      √ should filter by priority (7 ms)
+      √ should search across multiple fields (6 ms)
+    findOne
+      √ should return inquiry by ID (4 ms)
+      √ should throw when not found (41 ms)
+    update
+      √ should update inquiry fields (4 ms)
+      √ should recalculate itemCount and totalAmount when items provided (4 ms)
+    remove
+      √ should delete inquiry (4 ms)
+    getStats
+      √ should return inquiry KPIs (8 ms)
+      √ should handle zero values gracefully (3 ms)
+
+PASS scripts/catalog-taxonomy.spec.ts
+  catalog taxonomy classifier
+    √ maps Product Categories > Safety > Hand & Arm Protection > Safety Gloves to zashchita-ruk (3 ms)
+    √ maps Product Categories/Tools/Power Tools/Power Tool Replacement Parts to elektroinstrumenty (1 ms)
+    √ maps Product Categories > Machining > Drilling & Holemaking > Drill Bits to sverlenie (1 ms)
+    √ maps Product Categories > Electrical > Fuses, Circuit Breakers & Safety Switches to avtomaty-predohraniteli (1 ms)
+    √ maps Product Categories > Pneumatics > Pneumatic Valves to pnevmo-klapany (1 ms)
+    √ maps Product Categories > Hydraulics > Hydraulic Pumps to gidro-nasosy (1 ms)
+    √ maps Product Categories > Hydraulics > Hydraulic Cylinders & Seals > Rod Wipers to gidro-uplotneniya
+    √ maps Product Categories > Fasteners > Bolts & Screws to bolty-vinty
+    √ maps Product Categories > Power Transmission > Bearings to podshipniki-main (1 ms)
+    √ maps Product Categories > Power Transmission > Rotary Shaft Sealing > Rotary Shaft Oil Seals to uplotneniya-valov
+    √ maps Product Categories > Motors > AC Motors to ac-dvigateli
+    √ maps Product Categories > Welding > Stud Welding to shpilkosvarka (1 ms)
+    √ maps Product Categories > Pipe, Hose, Tube & Fittings > Pipe & Pipe Fittings to truby-fitingi
+    √ maps Product Categories > Pipe, Hose, Tube & Fittings > Hose Products > Chemical Hoses to shlangi-rukava (1 ms)
+    √ maps Product Categories > Cleaning and Janitorial > Waste, Recycling & Trash Supplies to musor-pererabotka
+    √ maps Product Categories > Material Handling > Storage & Workspace to skladskoe-hranenie (1 ms)
+    √ maps Product Categories > Lab Supplies > Lab Filters and Sieving to laboratornye-filtry (1 ms)
+    √ maps Product Categories > Fleet & Vehicle Maintenance > Brakes, Tires, & Wheels Maintenance to shiny-tormoza
+    √ maps Product Categories > Raw Materials > Metals > Tool Steel to metalloprokat (1 ms)
+    √ maps Product Categories > Office Supplies > Printers, Ink and Toners to rashodniki-dlya-pechati (1 ms)
+    √ maps Product Categories > Furnishings, Appliances & Hospitality > Window Treatments to obustroystvo-pomeshcheniy
+    √ maps Product Categories > Security > Locks > Door Locks to zamki-i-klyuchi (1 ms)
+    √ maps Product Categories > Safety > Signs & Facility Identification Products > Label Makers & Supplies to znaki-bezopasnosti
+    √ maps Product Categories > Paints, Equipment and Supplies > Painting Equipment > Paint Spray Guns & Systems to okrasochnoe-oborudovanie
+    √ maps Product Categories > Outdoor Equipment > Pressure Washers > Electric Pressure Washers to moyki-vysokogo-davleniya (1 ms)
+    √ uses category_tree when product_category is absent
+    √ normalizes slash and chevron paths consistently (1 ms)
+    √ classifies every source catalog row or handles it with an explicit curated decision (242 ms)
+
+PASS src/modules/admin/crm/crm.service.spec.ts (6.261 s)
+  CrmService
+    getPipeline
+      √ should return kanban columns grouped by stage (65 ms)
+      √ should return empty columns when no deals exist (15 ms)
+    create
+      √ should create a deal with auto-generated number (15 ms)
+      √ should generate sequential deal numbers (7 ms)
+      √ should create deal with custom stage and priority (5 ms)
+    update
+      √ should update deal fields (6 ms)
+      √ should reset daysInStage when stage changes (7 ms)
+      √ should not reset stage timer when stage unchanged (4 ms)
+      √ should strip protected fields (id, dealNumber) (6 ms)
+    remove
+      √ should delete a deal (6 ms)
+
+PASS src/modules/promotions/strategies/discount-strategies.spec.ts
+  Strategy pattern — discount strategies
+    √ clampDiscount rounds and keeps the value inside [0, subtotal] (1 ms)
+    PercentageDiscountStrategy
+      √ takes the percent of the subtotal (2 ms)
+      √ respects maxDiscount cap (1 ms)
+      √ rejects percent outside (0; 100] (8 ms)
+    FixedAmountDiscountStrategy
+      √ subtracts a fixed amount
+      √ never exceeds the subtotal (1 ms)
+      √ rejects non-positive amount
+    VolumeTierDiscountStrategy
+      √ applies the tier reached by each line quantity only (1 ms)
+      √ picks the highest tier available
+      √ requires at least one valid tier (1 ms)
+    BuyXGetYFreeStrategy
+      √ gives Y free units for every X+Y units of a line
+      √ requires integer buy/free >= 1 (3 ms)
+    DiscountStrategyRegistry — runtime selection
+      √ resolves strategies by type string at runtime (1 ms)
+      √ lists all registered strategies
+      √ throws DISCOUNT_STRATEGY_UNKNOWN for an unknown type (51 ms)
+      √ accepts a brand-new strategy without changing existing code (3 ms)
+
+[Nest] 3232  - 22.10.2026, 22:37:05     LOG [SmsNotifier] [sms:simulated] To +77011234567: Заказ оформлен
+[Nest] 3232  - 22.10.2026, 22:37:05   ERROR [NotificationsService] Notification "t" for u1 failed: db down
+[Nest] 15728  - 22.10.2026, 22:37:05   ERROR [PaymentsService] Gateway kaspi failed for SO-2026-000001: ECONNRESET
+PASS src/modules/notifications/notifiers.spec.ts (6.4 s)
+  Decorator pattern — notification channels
+    √ base component stores the notification in the database (in-app channel) (32 ms)
+    √ stacked decorators deliver through every channel and record them (7 ms)
+    √ a channel without an address is skipped, the rest still work (8 ms)
+    √ NotificationsService never throws when delivery fails (4 ms)
+
+PASS src/modules/payments/payments.service.spec.ts
+  PaymentsService
+    √ records a successful payment and auto-confirms a pending order (8 ms)
+    √ records a declined payment without changing the order status (2 ms)
+    √ converts an unexpected gateway crash into a failed payment (4 ms)
+    √ rejects unsupported methods, paid orders and cancelled orders (2 ms)
+    √ lists methods with their required fields (1 ms)
+
+PASS src/modules/promotions/promotions.service.spec.ts
+  PromotionsService (Strategy client)
+    √ returns zero discount when no code is given (3 ms)
+    √ normalises the code (trim + upper case) and applies the promotion strategy (2 ms)
+    √ picks a different algorithm for a different promotion at runtime
+    √ rejects unknown, inactive, expired, not-started, exhausted and below-minimum codes (3 ms)
+    √ switches an existing promotion to another strategy at runtime (admin update) (1 ms)
+    √ validates strategy configuration on create (2 ms)
+    √ rejects a duplicate promo code (1 ms)
+    √ uses a newly registered strategy without any change to PromotionsService (1 ms)
+    √ counts usage inside the order transaction (1 ms)
+    √ rejects renaming a promotion to a code that is already taken (1 ms)
+    √ throws PROMO_NOT_FOUND when updating a missing promotion (1 ms)
+
+PASS src/common/pipes/sanitize.pipe.spec.ts
+  SanitizePipe
+    √ вырезает теги скрипта (1 ms)
+    √ НЕ превращает HTML-сущности обратно в теги (регрессия SEC) (1 ms)
+    √ не собирает тег из сущностей внутри объекта (1 ms)
+    √ не портит обычный текст и числа (1 ms)
+    √ обрезает пробелы по краям
+
+PASS src/modules/search/search.service.spec.ts (6.706 s)
+  SearchService
+    search
+      √ should search products via PostgreSQL with word matching (45 ms)
+      √ should return empty results for no matches (6 ms)
+      √ should filter by brandId (5 ms)
+      √ should filter by categoryId (5 ms)
+      √ should filter by price range (4 ms)
+      √ should filter by in-stock only (4 ms)
+      √ should use relevance ordering when query provided (3 ms)
+      √ should convert a multi-word query to valid PostgreSQL tsquery syntax (3 ms)
+      √ should sanitize punctuation in an industrial product title before relevance ordering (4 ms)
+      √ should require every meaningful token within a query variant (3 ms)
+      √ should deduplicate repeated words and ignore one-character noise (4 ms)
+      √ should keep Russian and translated English queries as alternatives (5 ms)
+      √ should fall back to a safe sort field for unsupported sortBy values (3 ms)
+      √ should use sortBy when no query provided (3 ms)
+      √ should paginate results (4 ms)
+      √ should use Typesense when available and query ≥ 2 chars (3 ms)
+      √ should fall back to PG when Typesense returns empty (3 ms)
+      √ should skip Typesense for queries < 2 characters (3 ms)
+      √ should handle null/undefined query gracefully (2 ms)
+    autocomplete
+      √ should return matching products for autocomplete (4 ms)
+      √ should return empty array for short queries (3 ms)
+      √ should return empty array for empty query (3 ms)
+      √ should respect the limit parameter (3 ms)
+
+PASS src/modules/products/products.service.spec.ts (6.728 s)
+  ProductsService
+    findAll — brandSlug filter
+      √ should resolve brandSlug to brandId (47 ms)
+      √ should throw BRAND_NOT_FOUND when brandSlug does not exist (50 ms)
+    findAll — price filter
+      √ should apply minPrice and maxPrice (5 ms)
+      √ should apply only minPrice when maxPrice is absent (5 ms)
+    findAll — attributes filter
+      √ should parse attributes JSON and apply JSONB filter (6 ms)
+      √ should handle multiple attributes (3 ms)
+      √ should ignore invalid attributes JSON (2 ms)
+    findAll - category subtree filter
+      √ should include descendants when filtering by category (3 ms)
+      √ should resolve categorySlug and include descendants (4 ms)
+      √ should reject an unknown categorySlug (3 ms)
+    findAll — inStockOnly filter
+      √ should filter by stock > 0 when inStockOnly is true (2 ms)
+    findAll — warehouseId filter
+      √ should filter by warehouse (2 ms)
+    getFacets
+      √ should return price range, attributes, and warehouses with counts (3 ms)
+      √ should return empty arrays when brand has no products (4 ms)
+      √ should throw BRAND_NOT_FOUND when brandSlug does not exist (3 ms)
+      √ should use the root category path for curated facets in nested categories (3 ms)
+
+PASS src/modules/orders/order-cost/order-cost.decorators.spec.ts
+  Decorator pattern — optional order services
+    √ base component: goods minus discount (2 ms)
+    √ each decorator wraps an OrderCost and adds its own charge (2 ms)
+    √ decorators can be stacked; percentage services see the wrapped total
+    √ a decorator works on top of another decorator of the same type
+    √ applies minimum fees for small orders
+    √ buildOrderCost combines any selection in a deterministic order (1 ms)
+    √ buildOrderCost with all four services (1 ms)
+    √ rejects unknown service codes (19 ms)
+    √ without services the base component is returned unchanged (1 ms)
+    √ new functionality is added without modifying BaseOrderCost or existing decorators (1 ms)
+    √ exposes the service catalog for the UI (1 ms)
+
+PASS src/modules/payments/adapters/payment-adapters.spec.ts
+  Adapter pattern — payment gateways
+    √ lets the system use every provider through the same PaymentGateway interface (51 ms)
+    KaspiPayAdapter → KaspiPayClient (unmodified vendor SDK)
+      √ translates the call into the vendor format: tiyn, 10-digit phone, PascalCase (64 ms)
+      √ maps an approved vendor response to status "paid" (64 ms)
+      √ maps "Rejected / InsufficientFunds" to status "failed" with a readable reason (63 ms)
+      √ maps vendor StatusCode 503 to a failed payment (56 ms)
+      √ falls back to the customer profile phone when none is given (62 ms)
+      √ rejects a malformed phone before calling the vendor (32 ms)
+    HalykCardAdapter → HalykEpayGateway (callback API, unmodified)
+      √ wraps the callback API into a Promise and converts units/currency (61 ms)
+      √ maps ISO response code 51 to "insufficient funds" (61 ms)
+      √ maps code 14 (Luhn check failed) to "invalid card number" (60 ms)
+      √ maps code 54 for an expired card (62 ms)
+      √ validates card fields and lists every problem (9 ms)
+      √ turns a vendor exception into a rejected promise (2 ms)
+
+PASS src/modules/orders/orders.service.spec.ts
+  OrdersService — main order workflows
+    √ quote: applies promo strategy, service decorators and 12% VAT (5 ms)
+    √ create: reserves stock, stores the breakdown, counts the promo, clears the cart, charges and notifies (126 ms)
+    √ create: rejects an empty cart (2 ms)
+    √ create: rejects when stock is insufficient and reserves nothing
+    √ create: validates the payment method before touching stock (1 ms)
+    √ create: an invalid promo code aborts checkout with a readable reason (135 ms)
+    √ create: a declined payment keeps the order and tells the customer to retry (123 ms)
+    √ status machine: forbids skipping steps and allows valid transitions (2 ms)
+    √ status machine: only staff can change status
+    √ cancel: a customer cannot cancel someone else's order (1 ms)
+    √ cancel: a customer cannot cancel a shipped order, an admin is bound by the state machine
+    √ cancel: a paid order is refunded and its stock reservation released
+    √ pay: retrying payment on another customer's order is forbidden (1 ms)
+
+Test Suites: 19 passed, 19 total
+Tests:       262 passed, 262 total
+Snapshots:   0 total
+Time:        10.012 s
+Ran all test suites.

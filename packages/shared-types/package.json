@@ -1,0 +1,20 @@
+{
+  "name": "@synteco/shared-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared TypeScript types and Python models for Synteco — single-source JSON Schema → codegen",
+  "main": "./generated/typescript/index.ts",
+  "types": "./generated/typescript/index.ts",
+  "scripts": {
+    "generate": "npm run generate:typescript",
+    "generate:python": "datamodel-codegen --input schemas/events/ --output generated/python/ --input-file-type jsonschema --output-model-type pydantic_v2.BaseModel --use-schema-description --field-constraints --snake-case-field --use-field-description || echo 'Python codegen skipped (datamodel-codegen not installed)'",
+    "generate:typescript": "npx json-schema-to-typescript -i schemas/events/ -o generated/typescript/ --style.singleQuote --unreachableDefinitions --strictIndexSignatures",
+    "validate": "node scripts/validate-schemas.mjs && python scripts/validate-cross-language.py",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf generated/"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^14.0.0",
+    "typescript": "^5.5.0"
+  }
+}

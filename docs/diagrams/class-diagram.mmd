@@ -1,0 +1,191 @@
+classDiagram
+  direction LR
+
+  %% ── Domain model ──
+  class User {
+    +id: uuid
+    +email: string
+    +role: UserRole
+    +firstName, lastName, phone
+  }
+  class Product {
+    +id: uuid
+    +variantId: string
+    +title: string
+    +price: Decimal
+    +availability
+  }
+  class Category { +id; +name; +slug; +parentId }
+  class Brand { +id; +name; +slug }
+  class ProductStock { +quantity: int; +reserved: int }
+  class Warehouse { +code; +name }
+  class Cart { +userId; +sessionId }
+  class CartItem { +quantity; +unitPrice }
+  class Order {
+    +orderNumber: string
+    +status: OrderStatus
+    +subtotal, discount, servicesTotal, vat, total
+    +promoCode, discountStrategy
+    +services: Json
+    +paymentMethod
+    +paymentStatus: PaymentStatus
+  }
+  class OrderItem { +quantity; +unitPrice; +totalPrice }
+  class OrderStatusHistory { +fromStatus; +toStatus; +actor; +comment }
+  class Payment { +method; +status; +amount; +externalId; +message }
+  class Promotion {
+    +code: string
+    +strategy: string
+    +value: Decimal
+    +params: Json
+    +minOrderAmount, usageLimit, usedCount
+    +isActive, validFrom, validTo
+  }
+  class Notification { +type; +title; +body; +channels: string[]; +readAt }
+
+  User "1" --> "0..1" Cart
+  Cart "1" *-- "*" CartItem
+  CartItem "*" --> "1" Product
+  Product "*" --> "0..1" Brand
+  Product "*" --> "*" Category
+  Product "1" *-- "*" ProductStock
+  ProductStock "*" --> "1" Warehouse
+  User "1" --> "*" Order
+  Order "1" *-- "*" OrderItem
+  OrderItem "*" --> "1" Product
+  Order "1" *-- "*" OrderStatusHistory
+  Order "1" *-- "*" Payment
+  Order "*" ..> "0..1" Promotion : promoCode
+  User "1" --> "*" Notification
+
+  %% ── Services ──
+  class OrdersService {
+    +quote(userId, dto) OrderQuote
+    +create(userId, dto) Order
+    +pay(orderId, userId, dto) Order
+    +cancel(orderId, userId, dto) Order
+    +transitionStatus(orderId, userId, status) Order
+    -calculate(cart, dto)
+  }
+  class PromotionsService {
+    +evaluate(code, items, subtotal) AppliedDiscount
+    +create(dto) / update(id, dto) / remove(id)
+    +markUsed(id, tx)
+  }
+  class PaymentsService {
+    +listMethods()
+    +getGateway(method) PaymentGateway
+    +processOrderPayment(input) ProcessPaymentOutput
+  }
+  class NotificationsService {
+    -notifier: Notifier
+    +notify(input) string[]
+    +listForUser(userId)
+    +markRead(userId, id)
+  }
+  OrdersService --> PromotionsService
+  OrdersService --> PaymentsService
+  OrdersService --> NotificationsService
+  OrdersService ..> OrderCost : builds
+
+  %% ── Strategy ──
+  class DiscountStrategy {
+    <<interface>>
+    +type: string
+    +label: string
+    +calculate(ctx: DiscountContext) DiscountResult
+    +validateConfig(value, params) string[]
+  }
+  class DiscountStrategyRegistry {
+    -byType: Map~string, DiscountStrategy~
+    +register(strategy)
+    +get(type) DiscountStrategy
+    +list()
+  }
+  class PercentageDiscountStrategy
+  class FixedAmountDiscountStrategy
+  class VolumeTierDiscountStrategy
+  class BuyXGetYFreeStrategy
+  DiscountStrategy <|.. PercentageDiscountStrategy
+  DiscountStrategy <|.. FixedAmountDiscountStrategy
+  DiscountStrategy <|.. VolumeTierDiscountStrategy
+  DiscountStrategy <|.. BuyXGetYFreeStrategy
+  DiscountStrategyRegistry o-- "*" DiscountStrategy
+  PromotionsService --> DiscountStrategyRegistry
+
+  %% ── Adapter ──
+  class PaymentGateway {
+    <<interface>>
+    +method: PaymentMethodCode
+    +displayName: string
+    +requiredFields: string[]
+    +pay(req: PaymentRequest) Promise~PaymentResult~
+    +validateDetails(details)
+  }
+  class KaspiPayAdapter { -client: KaspiPayClient; +toKaspiPhone(raw)$ }
+  class HalykCardAdapter { -gateway: HalykEpayGateway; +toHalykCard(details)$ }
+  class BankInvoiceGateway
+  class CashOnDeliveryGateway
+  class KaspiPayClient {
+    <<vendor SDK>>
+    +CreateRemotePayment(req) Promise~KaspiRemotePaymentResponse~
+  }
+  class HalykEpayGateway {
+    <<vendor SDK>>
+    +authorizeAndCapture(card, amount_minor, currency_code, order_ref, callback)
+  }
+  PaymentGateway <|.. KaspiPayAdapter
+  PaymentGateway <|.. HalykCardAdapter
+  PaymentGateway <|.. BankInvoiceGateway
+  PaymentGateway <|.. CashOnDeliveryGateway
+  KaspiPayAdapter --> KaspiPayClient : adapts
+  HalykCardAdapter --> HalykEpayGateway : adapts
+  PaymentsService o-- "*" PaymentGateway
+
+  %% ── Decorator (order cost) ──
+  class OrderCost {
+    <<interface>>
+    +getCost() number
+    +getLines() CostLine[]
+  }
+  class BaseOrderCost { -subtotal; -discount }
+  class OrderCostDecorator {
+    <<abstract>>
+    #inner: OrderCost
+    +getCost() number
+    +getLines() CostLine[]
+    #extraCost()* number
+  }
+  class ExpressDeliveryDecorator
+  class CertificatePackageDecorator
+  class CargoInsuranceDecorator
+  class InstallationDecorator
+  OrderCost <|.. BaseOrderCost
+  OrderCost <|.. OrderCostDecorator
+  OrderCostDecorator o-- "1" OrderCost : wraps
+  OrderCostDecorator <|-- ExpressDeliveryDecorator
+  OrderCostDecorator <|-- CertificatePackageDecorator
+  OrderCostDecorator <|-- CargoInsuranceDecorator
+  OrderCostDecorator <|-- InstallationDecorator
+
+  %% ── Decorator (notification channels) ──
+  class Notifier {
+    <<interface>>
+    +send(msg, deliveredVia) Promise~string[]~
+  }
+  class InAppNotifier
+  class NotifierDecorator {
+    <<abstract>>
+    #inner: Notifier
+    #deliver(msg)* Promise~boolean~
+  }
+  class EmailNotifier
+  class SmsNotifier
+  class RealtimeNotifier
+  Notifier <|.. InAppNotifier
+  Notifier <|.. NotifierDecorator
+  NotifierDecorator o-- "1" Notifier : wraps
+  NotifierDecorator <|-- EmailNotifier
+  NotifierDecorator <|-- SmsNotifier
+  NotifierDecorator <|-- RealtimeNotifier
+  NotificationsService --> Notifier

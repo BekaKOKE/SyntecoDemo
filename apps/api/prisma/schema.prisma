@@ -1,0 +1,622 @@
+// Synteco Prisma Schema
+// PostgreSQL 16 with ltree, JSONB, pgvector
+// Modular schemas: product, commerce, customer, crm, inventory
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres", "postgresqlExtensions", "multiSchema"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [ltree, pg_trgm, pgcrypto, btree_gin]
+  schemas    = ["product", "commerce", "customer", "crm", "inventory", "content", "import_export", "analytics", "audit"]
+}
+
+// в”Ђв”Ђв”Ђ PRODUCT DOMAIN в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
+model Brand {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique @db.VarChar(255)
+  slug      String   @unique @db.VarChar(255)
+  logoUrl   String?  @map("logo_url") @db.VarChar(500)
+  website   String?  @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products  Product[]
+
+  @@schema("product")
+  @@map("brands")
+}
+
+model Category {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String    @db.VarChar(255)
+  slug        String    @unique @db.VarChar(255)
+  path        String    @unique @db.VarChar(500)                // ltree path (converted by init-db.sql → ltree + GiST index)
+  parentId    String?   @map("parent_id") @db.Uuid
+  parent      Category? @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  level       Int       @default(1)
+  sortOrder   Int       @default(0) @map("sort_order")
+  productCount Int      @default(0) @map("product_count")        // Denormalized, updated by trigger
+  imageUrl    String?   @map("image_url") @db.VarChar(500)
+  metaTitle   String?   @map("meta_title") @db.VarChar(200)
+  metaDesc    String?   @map("meta_description") @db.VarChar(500)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  products     ProductCategory[]
+  descendantOf CategoryClosure[] @relation("Ancestor")
+  ancestorOf   CategoryClosure[] @relation("Descendant")
+
+  @@index([path])
+  @@index([parentId])
+  @@schema("product")
+  @@map("categories")
+}
+
+model CategoryClosure {
+  ancestorId   String   @map("ancestor_id") @db.Uuid
+  descendantId String   @map("descendant_id") @db.Uuid
+  depth        Int
+
+  ancestor   Category @relation("Ancestor", fields: [ancestorId], references: [id])
+  descendant Category @relation("Descendant", fields: [descendantId], references: [id])
+
+  @@id([ancestorId, descendantId])
+  @@index([descendantId])
+  @@schema("product")
+  @@map("category_closure")
+}
+
+model Product {
+  id                   String   @id @default(uuid()) @db.Uuid
+  variantId            String   @unique @map("variant_id") @db.VarChar(50)  // Grainger natural key
+  itemId               String?  @map("item_id") @db.VarChar(50)             // Grainger item_id (null if "0")
+  title                String   @db.VarChar(500)
+  description          String?  @db.Text
+  descriptionRu        String?  @map("description_ru") @db.Text              // LLM-generated Russian
+  brandId              String   @map("brand_id") @db.Uuid
+  brand                Brand    @relation(fields: [brandId], references: [id])
+  imageUrl             String?  @map("image_url") @db.VarChar(1000)
+  price                Decimal  @db.Decimal(14, 2)                          // KZT base price
+  salePrice            Decimal? @map("sale_price") @db.Decimal(14, 2)
+  availability         String   @default("in_stock") @db.VarChar(20)        // in_stock | out_of_stock | discontinued
+  groupId              String?  @map("group_id") @db.VarChar(50)            // Variant grouping
+  hasVariations        Boolean  @default(false) @map("has_variations")
+  mpn                  String?  @db.VarChar(100)                            // Manufacturer Part Number
+  attributes           Json     @default("{}") @db.JsonB                   // variant_attributes {name: value}
+  specifications       Json     @default("{}") @map("spec_table") @db.JsonB  // Normalized spec table (JSONB)
+  metaTitle            String?  @map("meta_title") @db.VarChar(200)
+  metaDescription      String?  @map("meta_description") @db.VarChar(500)
+  qualityScore         Int      @default(0) @map("quality_score")           // Ranking: photo/RU-title/brand/attrs/desc/stock
+  embedding            Unsupported("vector(1536)")?                        // pgvector — AI embeddings
+  // searchVector         Unsupported("tsvector")?                            // PostgreSQL FTS (add via migration)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  categories     ProductCategory[]
+  variants       ProductVariant[]
+  images         ProductImage[]
+  documents      ProductDocument[]
+  prices         ProductPrice[]
+  stock          ProductStock[]
+  specEntries    ProductSpecification[]
+  orderItems     OrderItem[]
+  cartItems      CartItem[]
+
+  @@index([brandId])
+  @@index([groupId])
+  @@index([mpn])
+  @@index([variantId])
+  @@index([title])
+  @@index([availability])
+  @@index([qualityScore])
+  @@schema("product")
+  @@map("products")
+}
+
+model ProductCategory {
+  productId  String @map("product_id") @db.Uuid
+  categoryId String @map("category_id") @db.Uuid
+
+  product  Product  @relation(fields: [productId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@id([productId, categoryId])
+  @@schema("product")
+  @@map("product_categories")
+}
+
+model ProductVariant {
+  id         String  @id @default(uuid()) @db.Uuid
+  productId  String  @map("product_id") @db.Uuid
+  product    Product @relation(fields: [productId], references: [id])
+  optionId   String? @map("option_id") @db.VarChar(50)
+  optionName String? @map("option_name") @db.VarChar(500)
+  price      Decimal? @db.Decimal(14, 2)
+  inStock    Boolean @default(true) @map("in_stock")
+  imageUrl   String? @map("image_url") @db.VarChar(1000)
+
+  @@schema("product")
+  @@map("product_variants")
+}
+
+model ProductImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id])
+  url       String   @db.VarChar(1000)
+  thumbUrl  String   @map("thumb_url") @db.VarChar(1000)
+  alt       String?  @db.VarChar(500)
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@schema("product")
+  @@map("product_images")
+}
+
+model ProductDocument {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id])
+  name      String   @db.VarChar(255)
+  url       String   @db.VarChar(1000)
+  type      String   @default("pdf") @db.VarChar(20)   // pdf, cad, step, xlsx
+  fileSize  Int?     @map("file_size")                  // bytes
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@schema("product")
+  @@map("product_documents")
+}
+
+model ProductPrice {
+  id            String   @id @default(uuid()) @db.Uuid
+  productId     String   @map("product_id") @db.Uuid
+  product       Product  @relation(fields: [productId], references: [id])
+  tier          String   @default("retail") @db.VarChar(30)  // retail, wholesale, contract_1, contract_2, promo
+  price         Decimal  @db.Decimal(14, 2)
+  minQuantity   Int      @default(1) @map("min_quantity")
+  contractId    String?  @map("contract_id") @db.Uuid
+  validFrom     DateTime? @map("valid_from")
+  validTo       DateTime? @map("valid_to")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@unique([productId, tier, minQuantity])
+  @@schema("product")
+  @@map("product_prices")
+}
+
+model Warehouse {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(100)                    // "Almaty", "Astana", "Shymkent", "Atyrau"
+  code      String   @unique @db.VarChar(10)
+  address   String?  @db.VarChar(500)
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  stock ProductStock[]
+
+  @@schema("product")
+  @@map("warehouses")
+}
+
+model ProductStock {
+  productId   String   @map("product_id") @db.Uuid
+  warehouseId String   @map("warehouse_id") @db.Uuid
+  product     Product  @relation(fields: [productId], references: [id])
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+  quantity    Int      @default(0)
+  reserved    Int      @default(0)
+  reorderPoint Int     @default(10) @map("reorder_point")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@id([productId, warehouseId])
+  @@schema("product")
+  @@map("product_stock")
+}
+
+model ProductSpecification {
+  id        String   @id @default(uuid()) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  product   Product  @relation(fields: [productId], references: [id])
+  name      String   @db.VarChar(200)
+  value     String   @db.VarChar(500)
+  unit      String?  @db.VarChar(50)
+  group     String?  @db.VarChar(100)       // "Dimensions", "Electrical", "Materials"
+  sortOrder Int      @default(0) @map("sort_order")
+
+  @@schema("product")
+  @@map("product_specifications")
+}
+
+// в”Ђв”Ђв”Ђ COMMERCE DOMAIN в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
+enum OrderStatus {
+  pending
+  confirmed
+  processing
+  picking
+  packed
+  shipped
+  delivered
+  cancelled
+  returned
+
+  @@schema("commerce")
+}
+
+model Order {
+  id           String      @id @default(uuid()) @db.Uuid
+  orderNumber  String      @unique @map("order_number") @db.VarChar(20)   // SO-2026-00001
+  userId       String      @map("user_id") @db.Uuid
+  status       OrderStatus @default(pending)
+  subtotal     Decimal     @db.Decimal(14, 2)
+  discount     Decimal     @default(0) @db.Decimal(14, 2)
+  vat          Decimal     @default(0) @db.Decimal(14, 2)
+  total        Decimal     @db.Decimal(14, 2)
+  notes        String?     @db.Text
+  // Pricing breakdown (Strategy + Decorator patterns, see docs/02-software-design.md)
+  promoCode        String?       @map("promo_code") @db.VarChar(40)
+  discountStrategy String?       @map("discount_strategy") @db.VarChar(40)
+  servicesTotal    Decimal       @default(0) @map("services_total") @db.Decimal(14, 2)
+  services         Json          @default("[]")                     // [{ code, name, cost }]
+  // Payment (Adapter pattern)
+  paymentMethod    String?       @map("payment_method") @db.VarChar(30)
+  paymentStatus    PaymentStatus @default(pending) @map("payment_status")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+
+  items        OrderItem[]
+  statusHistory OrderStatusHistory[]
+  payments     Payment[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@schema("commerce")
+  @@map("orders")
+}
+
+model OrderItem {
+  id         String  @id @default(uuid()) @db.Uuid
+  orderId    String  @map("order_id") @db.Uuid
+  order      Order   @relation(fields: [orderId], references: [id])
+  productId  String  @map("product_id") @db.Uuid
+  // Restrict: never orphan an order line by deleting a product. Discontinue
+  // products (availability='discontinued') instead of hard-deleting them.
+  product    Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+  variantId  String? @map("variant_id") @db.VarChar(50)
+  quantity   Int
+  unitPrice  Decimal @map("unit_price") @db.Decimal(14, 2)
+  totalPrice Decimal @map("total_price") @db.Decimal(14, 2)
+  // Snapshot of the product at purchase time — order history stays intact and
+  // human-readable even if the product later changes name/SKU/image.
+  productTitle    String? @map("product_title") @db.VarChar(500)
+  productSku      String? @map("product_sku") @db.VarChar(50)
+  productImageUrl String? @map("product_image_url") @db.VarChar(1000)
+
+  @@index([productId])
+  @@schema("commerce")
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id         String      @id @default(uuid()) @db.Uuid
+  orderId    String      @map("order_id") @db.Uuid
+  order      Order       @relation(fields: [orderId], references: [id])
+  fromStatus OrderStatus @map("from_status")
+  toStatus   OrderStatus @map("to_status")
+  actor      String?     @db.VarChar(100)    // User ID or "system"
+  comment    String?     @db.Text
+  createdAt  DateTime    @default(now()) @map("created_at")
+
+  @@index([orderId])
+  @@schema("commerce")
+  @@map("order_status_history")
+}
+
+model Cart {
+  id        String       @id @default(uuid()) @db.Uuid
+  userId    String?      @map("user_id") @db.Uuid     // null for guest carts
+  sessionId String?      @map("session_id") @db.VarChar(100)  // guest cart identifier
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  items     CartItem[]
+
+  @@unique([userId])
+  @@unique([sessionId])
+  @@schema("commerce")
+  @@map("carts")
+}
+
+model CartItem {
+  id        String @id @default(uuid()) @db.Uuid
+  cartId    String @map("cart_id") @db.Uuid
+  cart      Cart   @relation(fields: [cartId], references: [id])
+  productId String @map("product_id") @db.Uuid
+  // Cascade: a deleted product should simply disappear from active carts.
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int    @default(1)
+  unitPrice Decimal? @map("unit_price") @db.Decimal(14, 2)  // Price snapshot at time of add
+  addedAt   DateTime @default(now()) @map("added_at")
+
+  @@unique([cartId, productId])
+  @@index([productId])
+  @@schema("commerce")
+  @@map("cart_items")
+}
+
+// в”Ђв”Ђв”Ђ CUSTOMER DOMAIN в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
+enum UserRole {
+  super_admin
+  admin
+  manager
+  customer_admin
+  customer_buyer
+  customer_viewer
+
+  @@schema("customer")
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique @db.VarChar(255)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  firstName    String    @map("first_name") @db.VarChar(100)
+  lastName     String    @map("last_name") @db.VarChar(100)
+  phone        String?   @db.VarChar(20)
+  role         UserRole  @default(customer_buyer)
+  isActive     Boolean   @default(true) @map("is_active")
+  companyId    String?   @map("company_id") @db.Uuid
+  company      Company?  @relation(fields: [companyId], references: [id])
+  lastLoginAt  DateTime? @map("last_login_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  // Доказательство согласия на обработку персональных данных.
+  // Закон РК № 94-V требует не только получить согласие активным действием,
+  // но и уметь подтвердить факт его получения. Все поля необязательные,
+  // чтобы миграция не затронула уже существующие записи.
+  consentAt        DateTime? @map("consent_at")
+  consentVersion   String?   @map("consent_version") @db.VarChar(32)
+  consentIp        String?   @map("consent_ip") @db.VarChar(64)
+  marketingConsent Boolean   @default(false) @map("marketing_consent")
+
+  refreshTokens RefreshToken[]
+
+  @@schema("customer")
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique @db.VarChar(500)
+  familyId  String   @map("family_id") @db.VarChar(100)    // Rotation detection
+  expiresAt DateTime @map("expires_at")
+  isRevoked Boolean  @default(false) @map("is_revoked")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([token])
+  @@schema("customer")
+  @@map("refresh_tokens")
+}
+
+model Company {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(255)
+  bin         String   @unique @db.VarChar(12)             // Р‘РРќ вЂ” KZ Business Identification Number
+  segment     String   @default("small_business") @db.VarChar(30)
+  contractId  String?  @map("contract_id") @db.Uuid
+  creditLimit Decimal? @map("credit_limit") @db.Decimal(14, 2)
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  users User[]
+
+  @@schema("customer")
+  @@map("companies")
+}
+
+// ─── CRM DOMAIN ────────────────────────────────────────────────────
+
+enum InquiryStatus {
+  new
+  in_progress
+  quoted
+  closed
+  cancelled
+
+  @@schema("crm")
+}
+
+enum InquiryPriority {
+  high
+  normal
+  low
+
+  @@schema("crm")
+}
+
+model Inquiry {
+  id            String          @id @default(uuid()) @db.Uuid
+  inquiryNumber String          @unique @map("inquiry_number") @db.VarChar(20)
+  companyName   String          @map("company_name") @db.VarChar(255)
+  contactName   String          @map("contact_name") @db.VarChar(100)
+  contactPhone  String?         @map("contact_phone") @db.VarChar(20)
+  contactEmail  String?         @map("contact_email") @db.VarChar(255)
+  items         Json            @default("[]") @db.JsonB
+  itemCount     Int             @default(0) @map("item_count")
+  totalAmount   Decimal         @default(0) @map("total_amount") @db.Decimal(14, 2)
+  status        InquiryStatus   @default(new)
+  priority      InquiryPriority @default(normal)
+  notes         String?         @db.Text
+  assignedTo    String?         @map("assigned_to") @db.Uuid
+  slaDueBy      DateTime?       @map("sla_due_by")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+  @@index([assignedTo])
+  @@schema("crm")
+  @@map("inquiries")
+}
+
+// в”Ђв”Ђв”Ђ IMPORT/AUDIT DOMAIN в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+
+enum DealStage {
+  inquiry
+  qualification
+  quote_sent
+  approval
+  won
+  lost
+
+  @@schema("crm")
+}
+
+model Deal {
+  id            String          @id @default(uuid()) @db.Uuid
+  dealNumber    String          @unique @map("deal_number") @db.VarChar(20)
+  title         String          @db.VarChar(300)
+  companyName   String          @map("company_name") @db.VarChar(255)
+  contactName   String?         @map("contact_name") @db.VarChar(100)
+  contactPhone  String?         @map("contact_phone") @db.VarChar(20)
+  value         Decimal         @db.Decimal(14, 2)
+  stage         DealStage       @default(inquiry)
+  priority      InquiryPriority @default(normal)
+  daysInStage   Int             @default(0) @map("days_in_stage")
+  ownerId       String?         @map("owner_id") @db.VarChar(100)
+  ownerName     String?         @map("owner_name") @db.VarChar(100)
+  hot           Boolean         @default(false)
+  notes         String?         @db.Text
+  stageEnteredAt DateTime       @default(now()) @map("stage_entered_at")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  @@index([stage])
+  @@index([ownerId])
+  @@index([createdAt])
+  @@schema("crm")
+  @@map("deals")
+}
+
+model ImportJob {
+  id            String   @id @default(uuid()) @db.Uuid
+  type          String   @db.VarChar(50)         // grainger_csv, grainger_json, 1c_stock, 1c_products
+  fileName      String   @map("file_name") @db.VarChar(500)
+  status        String   @default("pending") @db.VarChar(30)  // pending, processing, completed, failed
+  totalRows     Int      @default(0) @map("total_rows")
+  processedRows Int      @default(0) @map("processed_rows")
+  failedRows    Int      @default(0) @map("failed_rows")
+  errors        Json     @default("[]") @db.JsonB
+  result        Json?    @db.JsonB
+  createdBy     String?  @map("created_by") @db.VarChar(100)
+  startedAt     DateTime? @map("started_at")
+  completedAt   DateTime? @map("completed_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  @@index([status])
+  @@schema("import_export")
+  @@map("import_jobs")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id") @db.VarChar(50)
+  action     String   @db.VarChar(50)         // created, updated, deleted, exported
+  oldValues  Json?    @map("old_values") @db.JsonB
+  newValues  Json?    @map("new_values") @db.JsonB
+  userId     String?  @map("user_id") @db.VarChar(36)
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([entityType, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@schema("audit")
+  @@map("audit_logs")
+}
+
+// ═══════════════════════════════════════════════════════
+// PROMOTIONS · PAYMENTS · NOTIFICATIONS (course project additions)
+// ═══════════════════════════════════════════════════════
+
+enum PaymentStatus {
+  pending
+  paid
+  failed
+  refunded
+
+  @@schema("commerce")
+}
+
+/// A promo code bound to a discount algorithm (Strategy pattern).
+/// `strategy` selects the DiscountStrategy implementation at runtime;
+/// `value` and `params` are interpreted by that strategy.
+model Promotion {
+  id             String    @id @default(uuid()) @db.Uuid
+  code           String    @unique @db.VarChar(40)
+  name           String    @db.VarChar(200)
+  description    String?   @db.Text
+  strategy       String    @db.VarChar(40)        // percentage | fixed_amount | volume_tier | buy_x_get_y
+  value          Decimal   @default(0) @db.Decimal(14, 2)
+  params         Json      @default("{}")
+  minOrderAmount Decimal   @default(0) @map("min_order_amount") @db.Decimal(14, 2)
+  usageLimit     Int?      @map("usage_limit")
+  usedCount      Int       @default(0) @map("used_count")
+  isActive       Boolean   @default(true) @map("is_active")
+  validFrom      DateTime? @map("valid_from")
+  validTo        DateTime? @map("valid_to")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  @@index([isActive])
+  @@schema("commerce")
+  @@map("promotions")
+}
+
+/// One payment attempt for an order, processed through a PaymentGateway adapter.
+model Payment {
+  id          String        @id @default(uuid()) @db.Uuid
+  orderId     String        @map("order_id") @db.Uuid
+  order       Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  method      String        @db.VarChar(30)       // kaspi | halyk_card | bank_invoice | cash_on_delivery
+  status      PaymentStatus
+  amount      Decimal       @db.Decimal(14, 2)
+  externalId  String?       @map("external_id") @db.VarChar(100)
+  message     String?       @db.Text
+  createdAt   DateTime      @default(now()) @map("created_at")
+
+  @@index([orderId])
+  @@schema("commerce")
+  @@map("payments")
+}
+
+/// Notification delivered to a user (persisted in-app channel + simulated email/SMS).
+model Notification {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  orderId   String?   @map("order_id") @db.Uuid
+  type      String    @db.VarChar(40)          // order_created | payment_succeeded | order_status_changed ...
+  title     String    @db.VarChar(200)
+  body      String    @db.Text
+  channels  String[]  @default([])             // channels the message was sent through
+  readAt    DateTime? @map("read_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@schema("customer")
+  @@map("notifications")
+}

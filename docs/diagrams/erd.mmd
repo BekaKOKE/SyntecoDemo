@@ -1,0 +1,185 @@
+erDiagram
+  USERS ||--o| CARTS : "owns (or guest session)"
+  USERS ||--o{ ORDERS : places
+  USERS ||--o{ NOTIFICATIONS : receives
+  USERS ||--o{ REFRESH_TOKENS : has
+  COMPANIES |o--o{ USERS : employs
+
+  CARTS ||--o{ CART_ITEMS : contains
+  PRODUCTS ||--o{ CART_ITEMS : "added as"
+
+  ORDERS ||--|{ ORDER_ITEMS : contains
+  PRODUCTS ||--o{ ORDER_ITEMS : "ordered as"
+  ORDERS ||--|{ ORDER_STATUS_HISTORY : "status log"
+  ORDERS ||--o{ PAYMENTS : "payment attempts"
+  PROMOTIONS |o..o{ ORDERS : "applied via promo_code"
+  ORDERS |o..o{ NOTIFICATIONS : "about"
+
+  BRANDS |o--o{ PRODUCTS : makes
+  PRODUCTS ||--o{ PRODUCT_CATEGORIES : "classified"
+  CATEGORIES ||--o{ PRODUCT_CATEGORIES : groups
+  CATEGORIES |o--o{ CATEGORIES : "parent of"
+  PRODUCTS ||--o{ PRODUCT_PRICES : "priced (tiers)"
+  PRODUCTS ||--o{ PRODUCT_STOCK : "stocked"
+  WAREHOUSES ||--o{ PRODUCT_STOCK : holds
+  PRODUCTS ||--o{ PRODUCT_IMAGES : has
+  PRODUCTS ||--o{ PRODUCT_SPECIFICATIONS : has
+
+  USERS {
+    uuid id PK
+    varchar email UK
+    varchar password_hash
+    varchar first_name
+    varchar last_name
+    varchar phone
+    enum role "super_admin|admin|manager|customer_*"
+    bool is_active
+    timestamp consent_at
+  }
+  CARTS {
+    uuid id PK
+    uuid user_id UK "nullable"
+    varchar session_id UK "guest cart"
+  }
+  CART_ITEMS {
+    uuid id PK
+    uuid cart_id FK
+    uuid product_id FK
+    int quantity
+    decimal unit_price "snapshot"
+  }
+  PRODUCTS {
+    uuid id PK
+    varchar variant_id UK "SKU"
+    text title
+    uuid brand_id FK
+    decimal price
+    decimal sale_price
+    varchar availability
+    jsonb attributes
+    text image_url
+  }
+  CATEGORIES {
+    uuid id PK
+    varchar slug UK
+    ltree path
+    uuid parent_id FK
+    int level
+  }
+  BRANDS {
+    uuid id PK
+    varchar slug UK
+    varchar name
+  }
+  PRODUCT_CATEGORIES {
+    uuid product_id PK
+    uuid category_id PK
+  }
+  PRODUCT_PRICES {
+    uuid id PK
+    uuid product_id FK
+    varchar tier "retail|wholesale|contract"
+    decimal price
+    int min_quantity
+  }
+  WAREHOUSES {
+    uuid id PK
+    varchar code UK
+    varchar name
+  }
+  PRODUCT_STOCK {
+    uuid product_id PK
+    uuid warehouse_id PK
+    int quantity
+    int reserved
+    int reorder_point
+  }
+  PRODUCT_IMAGES {
+    uuid id PK
+    uuid product_id FK
+    text url
+  }
+  PRODUCT_SPECIFICATIONS {
+    uuid id PK
+    uuid product_id FK
+    varchar name
+    varchar value
+  }
+  ORDERS {
+    uuid id PK
+    varchar order_number UK "SO-2026-000001"
+    uuid user_id FK
+    enum status "pending..delivered|cancelled|returned"
+    decimal subtotal
+    decimal discount
+    varchar promo_code
+    varchar discount_strategy
+    jsonb services "[{code,label,amount}]"
+    decimal services_total
+    decimal vat
+    decimal total
+    varchar payment_method
+    enum payment_status "pending|paid|failed|refunded"
+  }
+  ORDER_ITEMS {
+    uuid id PK
+    uuid order_id FK
+    uuid product_id FK
+    int quantity
+    decimal unit_price
+    decimal total_price
+    text product_title "snapshot"
+  }
+  ORDER_STATUS_HISTORY {
+    uuid id PK
+    uuid order_id FK
+    enum from_status
+    enum to_status
+    varchar actor
+    text comment
+  }
+  PAYMENTS {
+    uuid id PK
+    uuid order_id FK
+    varchar method
+    enum status
+    decimal amount
+    varchar external_id
+    text message
+  }
+  PROMOTIONS {
+    uuid id PK
+    varchar code UK
+    varchar strategy "DiscountStrategy.type"
+    decimal value
+    jsonb params
+    decimal min_order_amount
+    int usage_limit
+    int used_count
+    bool is_active
+    timestamp valid_from
+    timestamp valid_to
+  }
+  NOTIFICATIONS {
+    uuid id PK
+    uuid user_id FK
+    uuid order_id "nullable"
+    varchar type
+    varchar title
+    text body
+    text_array channels
+    timestamp read_at
+  }
+  REFRESH_TOKENS {
+    uuid id PK
+    uuid user_id FK
+    varchar token UK
+    uuid family_id
+    bool is_revoked
+  }
+  COMPANIES {
+    uuid id PK
+    varchar name
+    varchar bin "KZ business id"
+    decimal credit_limit
+  }

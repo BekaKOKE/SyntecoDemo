@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["packages/shared-types/generated/**"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "^generate"],
+      "outputs": ["dist/**", ".next/**", "build/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^generate"]
+    },
+    "lint": {},
+    "test": {},
+    "typecheck": {
+      "dependsOn": ["^generate"]
+    },
+    "generate": {
+      "outputs": ["generated/**"]
+    },
+    "db:migrate": {},
+    "db:seed": {},
+    "clean": {
+      "cache": false
+    }
+  }
+}

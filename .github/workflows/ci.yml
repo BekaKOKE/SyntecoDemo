@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Typecheck, unit and E2E tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+
+      - name: Prisma client
+        run: pnpm --filter @synteco/api exec prisma generate
+
+      - name: Typecheck (api, web, admin)
+        run: |
+          pnpm --filter @synteco/api typecheck
+          pnpm --filter @synteco/web typecheck
+          pnpm --filter @synteco/admin typecheck
+
+      - name: Unit tests
+        run: pnpm --filter @synteco/api test
+
+      - name: Demo database (docker compose + migrations + seed)
+        run: pnpm demo:setup
+
+      - name: E2E tests
+        run: pnpm --filter @synteco/api test:e2e

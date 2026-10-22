@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synteco.kz/common/money.json",
+  "title": "Money",
+  "type": "object",
+  "required": ["amount", "currency"],
+  "properties": {
+    "amount": { "type": "string", "pattern": "^\\d+\\.\\d{2}$", "description": "Decimal amount as string to avoid floating-point issues" },
+    "currency": { "type": "string", "enum": ["KZT", "USD", "RUB", "EUR"], "default": "KZT" }
+  },
+  "additionalProperties": false
+}

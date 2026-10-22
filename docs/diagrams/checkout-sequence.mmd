@@ -1,0 +1,34 @@
+sequenceDiagram
+  autonumber
+  actor C as Customer (web)
+  participant OC as OrdersController
+  participant OS as OrdersService
+  participant PS as PromotionsService
+  participant ST as DiscountStrategy
+  participant DC as OrderCost decorators
+  participant PY as PaymentsService
+  participant AD as KaspiPayAdapter
+  participant SDK as KaspiPayClient (vendor)
+  participant NS as NotificationsService
+  participant DB as PostgreSQL
+
+  C->>OC: POST /orders {promoCode, services, paymentMethod, paymentDetails}
+  OC->>OS: create(userId, dto)
+  OS->>PY: getGateway(method).validateDetails()
+  OS->>DB: cart, stock availability
+  OS->>PS: evaluate(code, items, subtotal)
+  PS->>DB: promotion by code
+  PS->>ST: registry.get(promotion.strategy).calculate(ctx)
+  ST-->>PS: {amount, description}
+  OS->>DC: buildOrderCost(subtotal, discount, services)
+  DC-->>OS: getCost(), getLines()
+  OS->>DB: TX: insert order + items + history, reserve stock, promo usedCount+1
+  OS->>NS: notify(order_created)
+  OS->>PY: processOrderPayment(order, method, details)
+  PY->>AD: pay(PaymentRequest)
+  AD->>SDK: CreateRemotePayment({MerchantId, Phone, Amount in tiyn…})
+  SDK-->>AD: {StatusCode, Data.Status}
+  AD-->>PY: PaymentResult {paid|failed|pending}
+  PY->>DB: TX: insert payment, update order (paid → confirmed)
+  OS->>NS: notify(payment_succeeded | payment_failed)
+  OS-->>C: 201 Order + lastPayment

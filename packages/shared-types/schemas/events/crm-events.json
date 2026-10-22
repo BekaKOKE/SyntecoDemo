@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synteco.kz/events/crm-events.json",
+  "title": "CRMDomainEvents",
+  "definitions": {
+    "DealCreated": {
+      "type": "object",
+      "required": ["type", "dealId", "title", "companyId", "stageId", "value", "ownerId", "timestamp"],
+      "properties": {
+        "type": { "const": "deal.created" },
+        "dealId": { "type": "string", "format": "uuid" },
+        "title": { "type": "string", "minLength": 2 },
+        "companyId": { "type": "string", "format": "uuid" },
+        "contactId": { "type": "string", "format": "uuid", "nullable": true },
+        "stageId": { "type": "string" },
+        "value": { "$ref": "schemas/common/money.json" },
+        "ownerId": { "type": "string", "format": "uuid" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "DealStageChanged": {
+      "type": "object",
+      "required": ["type", "dealId", "fromStage", "toStage", "timestamp"],
+      "properties": {
+        "type": { "const": "deal.stage.changed" },
+        "dealId": { "type": "string", "format": "uuid" },
+        "fromStage": { "type": "string" },
+        "toStage": { "type": "string" },
+        "actor": { "type": "string", "format": "uuid" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "InquiryCreated": {
+      "type": "object",
+      "required": ["type", "inquiryId", "companyId", "items", "timestamp"],
+      "properties": {
+        "type": { "const": "inquiry.created" },
+        "inquiryId": { "type": "string", "format": "uuid" },
+        "companyId": { "type": "string", "format": "uuid" },
+        "contactName": { "type": "string" },
+        "contactPhone": { "type": "string", "nullable": true },
+        "items": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+        "priority": { "type": "string", "enum": ["low", "normal", "high"] },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

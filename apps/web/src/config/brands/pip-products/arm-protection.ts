@@ -1,0 +1,199 @@
+import type { BrandProduct } from '../types';
+import { buildProducts, type ProductRow, type ProductTables } from './build';
+
+/**
+ * PIP Arm Protection products, mirrored from the manufacturer catalog at
+ * https://us.pipglobal.com/en/products/?scID=2575
+ *
+ * English names and catalog numbers are kept verbatim — buyers search by PIP
+ * nomenclature. Only the descriptions are localised.
+ *
+ * NOTE ON COUNTS: PIP's listing reports 155 "items" for Cut Resistant Sleeve,
+ * but that counts size/colour variants — the same product tile repeats. There
+ * are 84 distinct products (84 distinct pIDs / catalog numbers); `variants`
+ * records how many listing slots each one occupies.
+ *
+ * Generated — do not edit by hand.
+ */
+
+const SC_ID = 2575;
+
+const TABLES: ProductTables = {
+  /** Russian card copy, shared between products of the same family. */
+  descriptions: {
+    0: "Волокно ATA® Hide-Away™ FR обеспечивает защиту от порезов ANSI A4 в лёгком нарукавнике. Три ширины — узкая, стандартная и широкая — под любой обхват руки. Вязка 13 класса, эластик без скольжения, вязаная манжета.",
+    1: "Смесовое волокно HPPE: отличная защита от порезов при высоком комфорте. Увеличенная ширина под объёмные руки, встроенное отверстие для большого пальца — защита до костяшек без потери подвижности. Бесшовная вязка.",
+    2: "Смесь ATA® Technology: высокая защита от порезов и комфорт. Эластичная лента на запястье удерживает нарукавник на месте весь день. Лёгкая бесшовная вязка, выдерживает многократную стирку. Сделано в США.",
+    3: "Нарукавник ATA® HideAway™: лёгкий, с хорошей защитой от порезов. Цвет маскирует загрязнения — изделие дольше выглядит новым. Отверстие для большого пальца защищает руку до костяшек. Бесшовная вязка.",
+    4: "Нарукавник ATA® HideAway™ с внутренним плетением Sta-COOL®: прохладный на ощупь, отводит влагу. Цвет маскирует загрязнения. Лёгкая бесшовная вязка, выдерживает стирку. Сделано в США.",
+    5: "Смесовое волокно HPPE с антимикробными нитями: защита от порезов плюс контроль запаха и бактерий — дольше носится между стирками. Волокна безопасны для пищевых производств. Бесшовная лёгкая вязка.",
+    6: "Смесь ATA® с арамидом: защита от порезов и врождённая огнестойкость — выдерживает нагрев до 337 °C без поддержания горения. Отверстие для большого пальца. Стирка в мыльной воде или химчистка.",
+    7: "Смесь ATA® Technology: высокая защита от порезов и комфорт. Эластичный верх надёжно удерживает нарукавник на руке. Лёгкая бесшовная вязка, выдерживает многократную стирку. Сделано в США.",
+    8: "Смесь ATA® Technology с хлопковым плетением: максимальный комфорт и отвод влаги. Отверстие для большого пальца защищает руку до костяшек. Лёгкая бесшовная конструкция. Сделано в США.",
+    9: "Смесь ATA® Technology с хлопковым плетением для комфорта. Лёгкая бесшовная вязка, приятная к коже. Выдерживает многократную стирку, что снижает затраты на замену. Сделано в США.",
+    10: "Волокно ATA® Hide-Away™ FR обеспечивает защиту от порезов ANSI A2 в лёгком нарукавнике. Три ширины под любой обхват руки, вязка 13 класса, цветной кант для быстрой сортировки, эластик без скольжения.",
+    11: "Волокно ATA® Technology HTP: защита от порезов ANSI A2 в лёгком нарукавнике. Три ширины на выбор, цветной кант обозначает ширину, эластик без скольжения и вязаная манжета по всей длине.",
+    12: "Волокно ATA® Hide-Away™ FR: защита от порезов ANSI A4 и вертикальный тест на горение ASTM F1358-08 — уровень 4. Три ширины, вязка 13 класса, вязаная манжета, отверстие для большого пальца.",
+    13: "ATA® Technology с волокном Sta-Cool®: защита от порезов ANSI A4. Внутреннее плетение прохладное на ощупь и отводит влагу. Три ширины, вязка 10 класса, цветной кант, эластик без скольжения.",
+    14: "Волокно ATA® FR: защита от порезов ANSI A5 в лёгком нарукавнике, вертикальный тест на горение ASTM F1358-08 — уровень 3. Три ширины, вязка 10 класса, эластик без скольжения, вязаная манжета.",
+    15: "ATA® Technology с волокном Sta-Cool®: защита от порезов ANSI A4 и уровень 2 по вертикальному тесту на горение. Плетение Sta-Cool® отводит влагу и держит прохладу. Три ширины, вязка 10 класса.",
+    16: "Волокно ATA® Hide-Away™ FR: защита от порезов ANSI A5 в лёгком нарукавнике, уровень 2 по вертикальному тесту на горение. Три ширины, вязка 10 класса, цветной кант, эластик без скольжения.",
+    17: "Волокно ATA® Hide-Away™ FR с модакрилом: защита от порезов ANSI A5 и огнестойкость уровня 2. Три ширины под любой обхват руки, вязка 10 класса, вязаная манжета по всей длине.",
+    18: "Двухслойный нарукавник из DuPont™ Kevlar®: защита от порезов ANSI A3 плюс термостойкость. Kevlar® не поддерживает горение — подходит для высокотемпературных операций. Трубчатый крой плотно садится и тянется.",
+    19: "Антимикробные нарукавники ATA® из смеси HPPE: защита от порезов ANSI A4 при прохладной посадке. Широкая модель с эластичной манжетой 5 дюймов сине-золотого цвета; цвет манжеты кодирует ширину, кант — уровень защиты.",
+    20: "Антимикробные нарукавники ATA® из смеси HPPE: защита ANSI A4, вязка 13 класса. Узкая модель с мягкой эластичной манжетой 5 дюймов зелёно-золотого цвета. Цветовая кодировка манжеты и канта упрощает подбор.",
+    21: "Антимикробные нарукавники ATA® из смеси HPPE: защита ANSI A4, лёгкая вязка 13 класса. Стандартная ширина с эластичной манжетой 5 дюймов чёрно-белого цвета. Антимикробное волокно подавляет бактерии и запах.",
+    22: "Лёгкий нарукавник ANSI A8 для пищевой промышленности. Бесшовная вязка 13 класса с полиэфир/спандекс-плетением для эластичности, смесь сверхпрочных волокон со сталью. Соответствует FDA 21 CFR 177.2800 — прямой контакт с пищей.",
+    23: "Нарукавник ECO Series™ из переработанной арамидной пряжи: те же защитные свойства, что у классического арамида, при снижении отходов. Тёмный цвет маскирует загрязнения, не выцветает на УФ. Двухслойный, с отверстием для большого пальца.",
+    24: "Нарукавник ECO Series™ из переработанной арамидной пряжи: защита от порезов и тепла при снижении отходов. Тёмный цвет скрывает загрязнения и продлевает срок между стирками, не выцветает на УФ. Двухслойная бесшовная вязка.",
+    25: "ATA® Technology со смесью HPPE: защита от порезов ANSI A7 при прохладной посадке. Тёмно-синий кант визуально подтверждает уровень A7. Антимикробное волокно, вязаная манжета, машинная стирка или химчистка.",
+    26: "ATA® Technology со смесью HPPE: защита ANSI A7, волокно прохладнее и комфортнее аналогов. Тёмно-синий кант обозначает уровень защиты. Антимикробная обработка против бактерий и запаха. Машинная стирка.",
+    27: "Первый нарукавник, объединивший Kevlar® и Nomex® в одной дугостойкой конструкции. Класс дуговой защиты NFPA 70E PPE 2 (ATPV 15,2 кал/см²), порезы ANSI A4, контактное тепло уровня 2. Для энергетики, нефтегаза, автопрома и электротранспорта.",
+    28: "Однослойный бесшовный нарукавник из DuPont™ Kevlar® и Nomex® Xtreme Arc Cut. ATPV 15,2 кал/см² по NFPA 70E (PPE 2), защита от порезов ANSI A4 и контактного тепла уровня 2. Огнестойкость не теряется при стирке.",
+    29: "Защита предплечья при работе с крупными деталями и на вытянутых руках. Kevlar® даёт защиту от порезов и тепла, двухслойная бесшовная вязка, отверстие для большого пальца, эластик без скольжения сверху.",
+    30: "Защита предплечья при работе с крупными деталями. Kevlar® обеспечивает стойкость к порезам и нагреву. Двухслойная бесшовная конструкция с отверстием для большого пальца. Для стекла, штамповки, автопрома и пищевых производств.",
+    31: "Смесь Dyneema® и нейлона: прохлада и комфорт вместе с защитой от порезов и истирания. Бесшовная конструкция, безлатексная манжета не рвётся даже после многократных стирок с отбеливателем. Отверстие для большого пальца.",
+    32: "Смесь Dyneema® и нейлона: лёгкость и прохлада при защите от порезов и истирания. Бесшовная конструкция, усиленная безлатексная манжета, цветовая маркировка размера. Для пищевых производств, электроники, стекла и бумаги.",
+    33: "Свободный нарукавник из фирменной смеси Pritex™ с антимикробным волокном: комфорт без раздражения кожи, стойкость к кислотам, щелочам и растворителям. Выдерживает стирку с хлором без усадки. Соответствует требованиям FDA и USDA.",
+    34: "Фирменная технология ACP: DuPont™ Kevlar® с полностью инкапсулированным стекловолокном — вдвое выше стойкость к порезам, чем у обычного параарамида. Термозащита до 177 °C. Неоновый цвет для хорошей видимости.",
+    35: "Для мясопереработки, птице- и рыбоперерабатывающих производств, допущен к прямому контакту с пищей (FDA 21 CFR 177). Сверхпрочные волокна со сталью, антимикробная обработка, вязаная манжета и клипса-зажим фиксируют нарукавник.",
+    36: "Био-волокна Dyneema® Diamond 1.0 в составе смеси: мягкое прохладное ощущение и надёжная защита от порезов и истирания. Бесшовная конструкция, отверстие для большого пальца, серый цвет маскирует загрязнения.",
+    37: "Био-волокна Dyneema® Diamond 1.0: защита от порезов и истирания при мягкой прохладной посадке. Эластичные края плотно прилегают и не пропускают мусор. Серый цвет дольше сохраняет опрятный вид.",
+    38: "Нарукавник ATA® HideAway™: лёгкий, с хорошей защитой от порезов. Цвет маскирует загрязнения — изделие дольше выглядит новым. Лёгкая бесшовная вязка, выдерживает многократную стирку. Сделано в США.",
+    39: "Нарукавник ATA® HideAway™ увеличенной ширины — под объёмные руки. Лёгкий, с хорошей защитой от порезов; цвет маскирует загрязнения. Бесшовная вязка, выдерживает многократную стирку. Сделано в США.",
+    40: "Двухслойный нарукавник ATA® Ultra: высокая защита от порезов при комфортной посадке. Носится поверх одежды или на голое тело. Отверстие для большого пальца, стирка в мыльной воде или химчистка.",
+    41: "Двухслойный нарукавник ATA® с внутренним плетением Sta-COOL®: прохладный на ощупь, отводит влагу. Отверстие для большого пальца защищает руку до костяшек. Лёгкая бесшовная конструкция. Сделано в США.",
+    42: "Двухслойный нарукавник ATA® с плетением Sta-COOL®: защита от порезов и прохладное ощущение на коже, отвод влаги. Лёгкая бесшовная вязка, стирается в мыльной воде или чистится химически.",
+    43: "Нарукавник ATA® Ultra: высокая защита от порезов и комфорт, носится поверх одежды или на голое тело. Отверстие для большого пальца, лёгкая бесшовная вязка. Стирка в мыльной воде или химчистка.",
+    44: "Смесовое волокно HPPE: прохладная посадка, отличная защита от порезов и высокий комфорт. Лёгкая бесшовная конструкция, мягкая к коже. Стирается в мыльной воде или чистится химически. Сделано в США.",
+    45: "Арамидное волокно: защита запястья и предплечья от порезов и нагрева, врождённая огнестойкость — выдерживает до 337 °C без поддержания горения. Лёгкая бесшовная вязка, выдерживает многократную стирку.",
+    46: "Смесь ATA® Technology: отличная защита от порезов и комфорт. Отверстие для большого пальца защищает руку до костяшек без потери подвижности. Лёгкая бесшовная вязка, выдерживает стирку. Сделано в США.",
+    47: "Двухслойный арамидный нарукавник: защита от порезов и нагрева до 337 °C без поддержания горения. Отверстие для большого пальца защищает руку до костяшек. Бесшовная вязка, выдерживает многократную стирку.",
+    48: "Нарукавник ATA® Ultra: защита от порезов при комфортной прохладной посадке, носится поверх одежды или на голое тело. Отверстие для большого пальца, лёгкая бесшовная конструкция. Сделано в США.",
+    49: "Смесь ATA® Ultra с арамидом: высокая защита от порезов и комфорт. Носится поверх одежды или на голое тело. Лёгкая бесшовная вязка, выдерживает многократную стирку. Сделано в США.",
+    50: "Бесшовный нарукавник из 100% хлопковой махры: защита от случайных порезов, ссадин и нагрева до 100 °C. Петельная структура защищает при кратковременном контакте с горячими поверхностями. Вязаная манжета и эластичный подшив.",
+    51: "Бюджетный нарукавник из плотного денима для работ, где не нужна защита от порезов. Свободный крой снижает утомляемость, эластичные манжеты с двух сторон не пропускают мусор. Для обслуживания, стройки и столярных работ.",
+    52: "Кольчужный нарукавник для предплечья и плеча: сварные кольца из хирургической стали 316L дают максимальную защиту от порезов и проколов. Регулируемый нагрудный ремень фиксирует положение, манжета на кнопке. Допущен к контакту с пищей.",
+    53: "Кольчужная футболка защищает обе руки одним изделием: полотно заходит на 30 см по груди и лопаткам. Сварные кольца из стали 316L — защита от порезов и проколов, разрез на горловине для быстрого надевания. Допущена к контакту с пищей.",
+  },
+  /** Russian application tags. */
+  applications: {
+    0: ["Порезы + лёгкое тепло", "Автопром", "Работа со стеклом", "Умеренный нагрев"],
+    1: ["Высокая защита от порезов", "Станочные работы", "Металлообработка", "Литьё пластмасс"],
+    2: ["Высокая прочность и гибкость", "Промышленность", "Пищевое производство"],
+    3: [],
+    4: ["Листовой металл", "Окраска", "Консервирование и переработка", "Сборка", "Литьё пластмасс", "Пищевое производство"],
+    5: ["Умеренный нагрев", "Автопром", "Бытовая техника", "Пекарни и керамика"],
+    6: ["Лёгкие работы", "Склад и логистика", "Упаковка и отгрузка"],
+    7: ["Пищевое производство", "Общепит", "Рыбная отрасль"],
+  },
+};
+
+const build = (rows: ProductRow[]): BrandProduct[] => buildProducts(SC_ID, TABLES, rows);
+
+/** ccID 11622 — 84 products. */
+export const cutResistantSleeve: BrandProduct[] = build([
+  [11622, "128353", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole - Wide Width", "S13ATAFR/4HA-EW-ES6T", "/archive/pim/300/7/SF13ATAFR-4HA-EW-ES6-18T---OMA.jpg", 0, 0, "18\", 22\"", "Green", 2],
+  [11622, "132147", "Kut Gard®", "Single-Ply ATP® High-Performance Fiber Blended Sleeve - Extra Wide", "MSATP-EW", "/archive/pim/300/10/MSATP-18EW---OMA.jpg", 1, 1, "18\"", "Gray", 3],
+  [11622, "132592", "Kut Gard®", "ATA Technology, Fiber Blended Sleeve, Single-Ply", "MSATP", "/archive/pim/300/14/MSATP-18---UP.jpg", 2, 1, "12\", 14\", 16\", 18\", 20\", 22\"", "Gray", 3],
+  [11622, "132590", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve with Thumb Hole - Extra Wide", "MSATAHA13EW-T", "/archive/pim/300/10/MSATAHA13EW-20T---OMA.jpg", 3, 1, "20\"", "Green", 3],
+  [11622, "132588", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve with Sta-Cool™ Plating with Thumb Hole", "MSATA/HACM-T", "/archive/pim/300/10/MSATA-HACM-14T---OMA.jpg", 4, 1, "24\"", "Green", 3],
+  [11622, "132035", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve with Thumb Hole", "MSATA/HA-T", "/archive/pim/300/10/MSATA-HA-18T---OMA.jpg", 3, 1, "12\", 14\", 17\", 18\", 20\", 21\", 22\", 24\"", "Green", 2],
+  [11622, "132349", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "MS2696", "/archive/pim/300/10/MS2696-14---OMA.jpg", 5, 2, "14\"", "Gray", 2],
+  [11622, "132341", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "MS-1097", "/archive/pim/300/10/MS-1097-18---OMA.jpg", 5, 2, "22\"", "Blue", 2],
+  [11622, "132340", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "MS-1097-AC", "/archive/pim/300/10/MS-1097-18-AC---OMA.jpg", 5, 2, "18\", 22\"", "Blue", 2],
+  [11622, "132234", "Kut Gard®", "Single-Ply ATA® Blended with Aramid Sleeve with Sewn-On Knit Wrist and Thumb Hole", "S-2X1-H", "/archive/pim/300/10/S-2X1-18H---OMA.jpg", 6, 0, "22\"", "Yellow", 2],
+  [11622, "132233", "Kut Gard®", "Single-Ply ATA® Blended Sleeve", "S-2X1", "/archive/pim/300/10/S-2X1-22H---OMA.jpg", 7, 1, "22\"", "Yellow", 2],
+  [11622, "132101", "Kut Gard®", "Single-Ply ATA® Blended Sleeve with Cotton Plating and Thumb Hole", "MSATAC-T", "/archive/pim/300/10/MSATAC-18T---OMA.jpg", 8, 1, "18\"", "Yellow", 2],
+  [11622, "132095", "Kut Gard®", "Single-Ply ATA® Blended Sleeve with Cotton Plating", "MSATAC", "/archive/pim/300/10/MSATAC-18---OMA.jpg", 9, 1, "14\", 18\"", "Yellow", 2],
+  [11622, "127487", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve", "S13ATAFR/2HA-ES6", "/archive/pim/300/8/S13ATAFR-2HA-ES6-18---OMA.jpg", 10, 1, "18\", 22\"", "Green", 2],
+  [11622, "127394", "Kut Gard®", "ATA® HPT Technology Narrow-Width Sleeve", "S10HTP/2BK-NW-ES6", "/archive/pim/300/8/S10HTP-2BK-NW-ES6-18---OMA.jpg", 11, 1, "14\", 18\", 22\"", "Black", 2],
+  [11622, "128457", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve - Narrow Width", "S13ATAFR/4HA-NW-ES6", "/archive/pim/300/7/S13ATAFR-4HA-NW-ES6-18---OMA.jpg", 0, 0, "18\", 22\"", "Green", 2],
+  [11622, "128455", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve", "S13ATAFR/4HA-ES6", "/archive/pim/300/7/SF13ATAFR-4HA-ES6-18---OMA.jpg", 0, 0, "18\", 22\"", "Green", 2],
+  [11622, "128454", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve - Wide Width", "S13ATAFR/4HA-EW-ES6", "/archive/pim/300/7/SF13ATAFR-4HA-EW-ES6-18---OMA.jpg", 0, 0, "18\", 22\"", "Green", 2],
+  [11622, "128402", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole - Narrow Width", "S13ATAFR/4HA-NW-ES6T", "/archive/pim/300/7/S13ATAFR-4HA-NW-ES6-18T---OMA.jpg", 0, 0, "18\", 22\"", "Green", 2],
+  [11622, "128355", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole", "S13ATAFR/4HA-ES6-T", "/archive/pim/300/7/SF13ATAFR-4HA-ES6-18T---OMA.jpg", 12, 0, "18\", 22\"", "Green", 2],
+  [11622, "128155", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve - Wide Width", "S10ATAFRCM/4-EW-ES6", "/archive/pim/300/7/S10ATAFRCM-4-EW-ES6-18---OMA.jpg", 13, 1, "18\", 22\"", "Green", 2],
+  [11622, "127728", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve with Thumb Hole - Wide Width", "S10ATAFR/5BK-EW-ES6T", "/archive/pim/300/7/S10ATA-5BK-EW-ES6-18T---OMA.jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "127727", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve with Thumb Hole", "S10ATAFR/5BK-ES6-T", "/archive/pim/300/7/S10ATA-5BK-ES6-18T---OMA.jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "127755", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve with Thumb Hole - Narrow Width", "S10ATAFR/5BK-NW-ES6T", "/archive/pim/300/9/S10ATA-5BK-EW-ES6-18T---OMA(1).jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "127750", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve - Wide Width", "S10ATAFR/5BK-EW-ES6", "/archive/pim/300/7/S10ATA-5BK-EW-ES6-18---OMA.jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "127746", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve", "S10ATAFR/5BK-ES6", "/archive/pim/300/7/S10ATA-5BK-ES6-18---OMA.jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "127756", "Kut Gard®", "Single-Ply ATA® / Modacrylic Blended Sleeve - Narrow Width", "S10ATAFR/5BK-NW-ES6", "/archive/pim/300/7/S10ATA-5BK-NW-ES6-18---OMA.jpg", 14, 1, "18\", 22\"", "Black", 2],
+  [11622, "128154", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve with Thumb Hole - Wide Width", "S10ATAFRCM/4-EW-ES6T", "/archive/pim/300/7/S10ATAFRCM-4-EW-ES6-18T---OMA.jpg", 13, 1, "18\", 22\"", "Green", 2],
+  [11622, "128150", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve with Thumb Hole", "S10ATAFRCM/4-ES6-T", "/archive/pim/300/7/S10ATAFRCM-4-ES6-18T---OMA.jpg", 15, 1, "18\", 22\"", "Green", 2],
+  [11622, "128159", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve with Thumb Hole - Narrow Width", "S10ATAFRCM/4-NW-ES6T", "/archive/pim/300/7/S10ATAFRCM-4-NW-ES6-18T---OMA.jpg", 13, 1, "18\", 22\"", "Green", 2],
+  [11622, "128166", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve", "S10ATAFR/5HA-ES6", "/archive/pim/300/7/S10ATAFR-5HA-ES6-18---OMA.jpg", 16, 1, "18\", 22\"", "Green", 2],
+  [11622, "128176", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve with Thumb Hole - Narrow Width", "S10ATAFR/5HA-NW-ES6T", "/archive/pim/300/7/S10ATAFR-5HA-NW-ES6-18T---OMA.jpg", 17, 1, "18\", 22\"", "Green", 2],
+  [11622, "128170", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve - Wide Width", "S10ATAFR/5HA-EW-ES6", "/archive/pim/300/7/S10ATAFR-5HA-EW-ES6-18---OMA.jpg", 17, 1, "18\", 22\"", "Green", 2],
+  [11622, "128168", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve with Thumb Hole", "S10ATAFR/5HA-ES6-T", "/archive/pim/300/7/S10ATAFR-5HA-ES6-18T---OMA.jpg", 16, 1, "18\", 22\"", "Green", 2],
+  [11622, "128174", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve - Narrow Width", "S10ATAFR/5HA-NW-ES6", "/archive/pim/300/7/S10ATAFR-5HA-NW-ES6-18---OMA.jpg", 16, 1, "18\", 22\"", "Green", 2],
+  [11622, "51699", "Kut Gard®", "DuPont™ Kevlar® 2-ply Sleeve", "10-KDS", "/archive/pim/300/9/10-KDS14---M.jpg", 18, 3, "14\", 16\", 18\"", "Yellow", 2],
+  [11622, "153685", "Kut Gard®", "ATA Technology 13G Wide Sleeve with Thumb Hole, B/G Elastic Top", "20-S13ATA/PE4-EW-T-BG", "/archive/pim/300/35/20-S13ATA-PE4-EW-22T-BG---UP.jpg", 19, 3, "22\"", "Gray", 2],
+  [11622, "155860", "Kut Gard®", "ATA Tech, 13G Narrow Sleeve, TH, G/G Elastic Top", "20-S13ATA/PE4-NW-T-GG", "/archive/pim/300/35/20-S13ATA-PE4-NW-22T-GG.jpg", 20, 3, "22\"", "Gray", 2],
+  [11622, "155859", "Kut Gard®", "ATA Technology 13-Gauge Standard Width Knit Sleeve, Knit Wrist, Thumb Hole, Gray, with Black/White Elastic", "20-S13ATA/PE4-T-BW", "/archive/pim/300/35/20-S13ATA-PE4-22T-BW---UP.jpg", 21, 3, "22\"", "Gray", 2],
+  [11622, "158040", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "S13CC/8-AC", "/archive/pim/300/34/S13CC-8-AC (1).jpg", 22, 3, "18\", 22\"", "Gray, Green, Hi-Vis Orange", 2],
+  [11622, "153316", "Kut Gard® ECO Series™", "2-Ply ASP Reclaimed Aramid Sleeve with Thumb Hole", "ASP-T", "/archive/pim/300/32/ASP-18T---UP.jpg", 23, 3, "14\", 18\", 22\", 24\"", "Purple", 2],
+  [11622, "153313", "Kut Gard® ECO Series™", "2-Ply ASP Reclaimed Aramid Sleeve", "ASP", "/archive/pim/300/32/ASP-18---UP.jpg", 24, 3, "14\", 18\", 22\", 24\"", "Purple", 2],
+  [11622, "152999", "Kut Gard®", "ATA Technology HPPE Blend 13G Seamless Knit Sleeve with Thumb Hole", "20-S13ATA/PE7-T", "/archive/pim/300/31/MS13ATA-PE7-18T---UP.jpg", 25, 3, "18\", 22\"", "Gray", 2],
+  [11622, "152982", "Kut Gard®", "ATA Technology HPPE Blend, 13G Knit Sleeve", "20-S13ATA/PE7", "/archive/pim/300/31/MS13ATA-PE7-18---UP.jpg", 26, 3, "18\", 22\"", "Gray", 2],
+  [11622, "148689", "Kut Gard®", "AR/FR Single-Ply DuPont™ Kevlar® / Nomex® Xtreme Arc Cut Fiber Blended Sleeve with Thumb Hole", "S13ARCGY/N4-T", "/archive/pim/300/25/S13ARCGY-N4-18T---UP.jpg", 27, 3, "18\"", "Dark Gray", 2],
+  [11622, "148688", "Kut Gard®", "AR/FR Single-Ply DuPont™ Kevlar® / Nomex® Xtreme Arc Cut Fiber Blended Sleeve", "S13ARCGY/N4", "/archive/pim/300/25/S13ARCGY-N4-18---UP.jpg", 28, 3, "18\"", "Dark Gray", 2],
+  [11622, "38378", "Kut Gard®", "2-Ply DuPont™ Kevlar® Sleeve with Thumb Hole", "10-KSTONS", "/archive/pim/300/1/10-KS18THV---M.jpg", 29, 3, "18\"", "Yellow", 2],
+  [11622, "51904", "Kut Gard®", "2-Ply DuPont™ Kevlar® Sleeve with Thumb Hole", "10-KDSTH", "/archive/pim/300/9/10-KDS18TH---M.jpg", 30, 3, "18\"", "Yellow", 2],
+  [11622, "13374", "Kut Gard®", "Single-Ply Spun Dyneema® / Nylon Blended Sleeve with Thumb Hole", "20-SDTO", "/archive/pim/300/1/20-SD18TO---M.jpg", 31, 3, "18\"", "White", 2],
+  [11622, "12834", "Kut Gard®", "Single-Ply Spun Dyneema® / Nylon Blended Sleeve", "20-SD", "/archive/pim/300/1/20-D18---M.jpg", 32, 2, "14\", 16\", 18\"", "White", 2],
+  [11622, "41258", "Kut Gard®", "Single-Ply Pritex™ Blended Blousy Sleeve with Antimicrobial Fibers - Narrow Width", "15-2BKS", "/archive/pim/300/1/15-218BLK---M.jpg", 33, 4, "12\", 14\", 18\", 20\", 24\"", "Black", 2],
+  [11622, "48679", "Kut Gard®", "2-Ply ACP / DuPont™ Kevlar® Blended Sleeve", "10-KANO", "/archive/pim/300/1/10-KANO24---M.jpg", 34, 0, "18\"", "Neon Orange", 2],
+  [11622, "140298", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "S7-15-AC", "/archive/pim/300/11/S7-1522-AC.jpg", 35, 3, "22\"", "Light Gray", 2],
+  [11622, "143176", "Kut Gard® ECO Series™", "Single-Ply Dyneema® Diamond 1.0 Blended Sleeve with Thumb Hole", "S13ECO/PE5-T", "/archive/pim/300/10/S13ECO-PE5-T.jpg", 36, 3, "18\"", "Gray", 2],
+  [11622, "143174", "Kut Gard® ECO Series™", "Single-Ply Dyneema® Diamond 1.0 Blended Sleeve", "S13ECO/PE5", "/archive/pim/300/10/S13ECO-PE5.jpg", 37, 3, "18\"", "Gray", 2],
+  [11622, "132048", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve", "MSATA/HA", "/archive/pim/300/10/MSATA-HA-18---OMA.jpg", 38, 1, "10\", 18\", 25\"", "Green", 2],
+  [11622, "132121", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve with Thumb Hole", "MSATAHA13-T", "/archive/pim/300/10/MSATAHA13-18T---OMA.jpg", 3, 1, "18\"", "Green", 2],
+  [11622, "132175", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve", "MSHA13", "/archive/pim/300/9/MSHA13-18---OMA.jpg", 38, 1, "13\", 18\"", "Green", 2],
+  [11622, "132176", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve with Thumb Hole", "MSHA13-T", "/archive/pim/300/10/MSHA13-T.jpg", 3, 1, "18\"", "Green", 2],
+  [11622, "132178", "Kut Gard®", "Single-Ply ATA® Hide-Away™ Blended Sleeve - Extra Wide", "MSHA13J", "/archive/pim/300/10/MSHA13J-18---OMA.jpg", 39, 1, "18\"", "Green", 2],
+  [11622, "132184", "Kut Gard®", "2-Ply ATA® Ultra Blended Sleeve with Thumb Hole", "MSULTRA2-T", "/archive/pim/300/10/MSULTRA2-18T---OMA.jpg", 40, 1, "18\"", "Yellow", 2],
+  [11622, "132105", "Kut Gard®", "2-Ply ATA® Blended Sleeve with Sta-COOL™ Liner with Thumb Hole", "MSATACM2X2.5-T", "/archive/pim/300/10/MSATACM2X2-5-18T---OMA.jpg", 41, 2, "14\", 18\", 22\", 24\"", "Yellow", 2],
+  [11622, "132107", "Kut Gard®", "2-Ply ATA® Blended Sleeve with Sta-COOL™ Liner", "MSATACM2X2.5", "/archive/pim/300/7/MSATACM2X2-18---OMA.jpg", 42, 2, "18\"", "Yellow", 2],
+  [11622, "132337", "Claw Cover®", "Single-Ply HPPE / Steel Blended Sleeve with Antimicrobial Fibers", "CS7LGY-AC", "/archive/pim/300/10/CS7LGY-22AC---OMA.jpg", 5, 2, "18\", 22\"", "Gray", 2],
+  [11622, "132585", "Kut Gard®", "Single-Ply ATA® Ultra Blended Sleeve with Thumb Hole", "MS1ATA2X2.5-T", "/archive/pim/300/9/MS1ATA2X2-5-18T---OMA.jpg", 43, 1, "18\"", "Yellow", 2],
+  [11622, "131992", "Kut Gard®", "Single-Ply High Performance Polyester Fiber Blended Sleeve", "MS1725", "/archive/pim/300/9/MS1725-18---OMA.jpg", 44, 2, "14\", 18\"", "Gray", 2],
+  [11622, "132600", "Kut Gard®", "2-Ply Aramid Sleeve with Cotton Liner", "MSKC", "/archive/pim/300/10/MSKC-18---OMA.jpg", 45, 1, "10\", 12\", 14\", 18\", 21\", 24\"", "Yellow", 2],
+  [11622, "127392", "Kut Gard®", "Single-Ply ATA® / High Tenacity Polyester Blended Sleeve - Wide Width", "S10HTP/2BK-EW-ES6", "/archive/pim/300/7/S10HTP-2BK-EW-ES6-18---CUFF.jpg", 11, 1, "14\", 18\", 22\"", "Black", 1],
+  [11622, "127390", "Kut Gard®", "Single-Ply ATA® / High Tenacity Polyester Blended Sleeve", "S10HTP/2BK-ES6", "/archive/pim/300/7/S10HTP-2BK-ES6-18---CUFF.jpg", 11, 1, "14\", 18\", 22\"", "Black", 1],
+  [11622, "127399", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole - Wide Width", "S13ATAFR/2HA-EW-ES6T", "/archive/pim/300/8/S13ATAFR-2HA-EW-ES6-18T---OMA.jpg", 10, 1, "18\", 22\"", "Green", 1],
+  [11622, "127401", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole - Narrow Width", "S13ATAFR/2HA-NW-ES6T", "/archive/pim/300/8/S13ATAFR-2HA-NW-ES6-18T---OMA.jpg", 10, 1, "18\", 22\"", "Green", 1],
+  [11622, "127396", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve with Thumb Hole", "S13ATAFR/2HA-ES6-T", "/archive/pim/300/8/S13ATAFR-2HA-ES6-18T---OMA.jpg", 10, 1, "18\", 22\"", "Green", 1],
+  [11622, "127408", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve - Wide Width", "S13ATAFR/2HA-EW-ES6", "/archive/pim/300/8/S13ATAFR-2HA-EW-ES6-18---OMA.jpg", 10, 1, "18\", 22\"", "Green", 1],
+  [11622, "127488", "Kut Gard®", "Single-Ply ATA® / Hide-Away™ FR Blended Sleeve - Narrow Width", "S13ATAFR/2HA-NW-ES6", "/archive/pim/300/8/S13ATAFR-2HA-NW-ES6-18---OMA.jpg", 10, 1, "18\", 22\"", "Green", 1],
+  [11622, "128151", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve", "S10ATAFRCM/4-ES6", "/archive/pim/300/7/S10ATAFRCM-4-ES6-18---OMA.jpg", 13, 1, "18\", 22\"", "Yellow", 1],
+  [11622, "128157", "Kut Gard®", "Single-Ply ATA® / Sta-Cool™ Blended Sleeve - Narrow Width", "S10ATAFRCM/4-NW-ES6", "/archive/pim/300/7/S10ATAFRCM-4-NW-ES6-18---OMA.jpg", 13, 1, "18\", 22\"", "Green", 1],
+  [11622, "128173", "Kut Gard®", "Single-Ply ATA® Hide-Away™ FR / Modacrylic Blended Sleeve with Thumb Hole - Wide Width", "S10ATAFR/5HA-EW-ES6T", "/archive/pim/300/7/S10ATAFR-5HA-EW-ES6-18T---OMA.jpg", 16, 1, "18\", 22\"", "Green", 1],
+  [11622, "132593", "Kut Gard®", "Single-Ply ATA® Blended Sleeve with Thumb Hole", "MSATP-T", "/archive/pim/300/14/MSATP-18T---UP.jpg", 46, 1, "16\", 18\", 20\", 22\", 24\"", "Gray", 1],
+  [11622, "132434", "Kut Gard®", "2-Ply Aramid Sleeve", "MSK", "/archive/pim/300/10/MSK-18---OMA.jpg", 45, 0, "10\", 12\", 13\", 14\", 15\", 18\", 24\"", "Yellow", 1],
+  [11622, "132470", "Kut Gard®", "Single-Ply Aramid Sleeve", "MSK1", "/archive/pim/300/10/MSK1-18---OMA.jpg", 45, 0, "18\"", "Yellow", 1],
+  [11622, "132599", "Kut Gard®", "2-Ply Aramid Sleeve with Thumb Hole", "MSK-T", "/archive/pim/300/9/MSK-18T---OMA.jpg", 47, 0, "14\", 18\", 22\", 24\"", "Yellow", 1],
+  [11622, "132182", "Kut Gard®", "Single-Ply ATA® Ultra Blended Sleeve with Thumb Hole", "MSULTRA-T", "/archive/pim/300/10/MSULTRA-18T---OMA.jpg", 48, 1, "18\", 25\"", "Yellow", 1],
+  [11622, "132187", "Kut Gard®", "Single-Ply ATA® Ultra / Aramid Blended Sleeve", "MSULTRAHVO1", "/archive/pim/300/10/MSULTRAHVO1-18---OMA.jpg", 49, 0, "12\", 18\"", "Hi-Vis Orange", 1],
+  [11622, "111935", "Kut Gard®", "Single-Ply ATA® / High Tenacity Polyester Blended Sleeve with Thumb Hole", "S10HTP/2BK-ES6-T", "/archive/pim/300/7/S10HTP-2BK-ES6-18---CUFF.jpg", 11, 1, "12\", 18\", 22\"", "Black", 1],
+]);
+
+/** ccID 11666 — 2 products. */
+export const generalDutySleeve: BrandProduct[] = build([
+  [11666, "2964", "PIP®", "Heavy Weight Terry Cloth Sleeve - 15\"", "42-215", "/archive/pim/300/1/42-215.jpg", 50, 5, "15\"", "Natural", 1],
+  [11666, "51702", "PIP®", "Single-Ply Denim Sleeve", "23-44", "/archive/pim/300/1/23-44182---M.jpg", 51, 6, "18\"", "Blue", 1],
+]);
+
+/** ccID 11725 — 2 products. */
+export const metalMeshSleeves: BrandProduct[] = build([
+  [11725, "135197", "US Mesh®", "Stainless Steel Mesh Sleeve with Adjustable Chest Strap", "USM-3105", "/archive/pim/300/10/USM-3105.jpg", 52, 7, "XS, S, M, L, XL, 2XL", "Silver", 1],
+  [11725, "135235", "US Mesh®", "Stainless Steel Mesh T-Shirt with Double Sleeve - 12\" Long", "USM-3315", "/archive/pim/300/10/USM-3315.jpg", 53, 7, "XS, S, M, L, XL, 2XL, 3XL", "Silver", 1],
+]);
+
+/** Every product of this category, keyed by PIP ccID. */
+export const pipArmProtection: Record<string, BrandProduct[]> = {
+  '11622': cutResistantSleeve,
+  '11666': generalDutySleeve,
+  '11725': metalMeshSleeves,
+};

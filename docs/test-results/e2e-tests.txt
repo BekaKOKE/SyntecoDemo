@@ -1,0 +1,316 @@
+  console.warn
+    Request #1792690637707: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690637707: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690637707: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+PASS src/modules/auth/auth.e2e.spec.ts (8.436 s)
+  Auth E2E
+    POST /api/v1/auth/login
+      √ should return 400 for missing email (47 ms)
+      √ should return 400 for missing password (9 ms)
+      √ should return 400 for empty body (7 ms)
+      √ should return 401 for wrong credentials (120 ms)
+      √ should return 4xx for non-existent user (13 ms)
+      √ should login successfully with valid credentials (138 ms)
+      √ should return tokens with correct structure (112 ms)
+    POST /api/v1/auth/register
+      √ should return 400 for missing fields (5 ms)
+      √ should register a new user and return tokens (410 ms)
+      √ should not register duplicate email (7 ms)
+    POST /api/v1/auth/refresh
+      √ should return 401 for empty body (no refresh token) (22 ms)
+      √ should refresh token successfully (19 ms)
+      √ should reject invalid refresh token (7 ms)
+    POST /api/v1/auth/me
+      √ should return 401 without token (5 ms)
+      √ should return 401 with invalid token (3 ms)
+      √ should return user profile with valid token (8 ms)
+    RBAC — protected routes
+      √ should reject unauthenticated access to admin routes (4 ms)
+      √ should allow admin access to admin routes (81 ms)
+      √ should allow unauthenticated access to products (36 ms)
+
+  console.warn
+    Request #1792690640584: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690640584: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690640584: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+PASS src/modules/orders/checkout-patterns.e2e.spec.ts
+  Checkout with design patterns (E2E)
+    √ lists payment methods and optional services (public) (18 ms)
+    √ quote: switching the promo code switches the discount strategy (56 ms)
+    √ quote: services are stacked on top of the discounted cost (29 ms)
+    √ rejects an expired promo, an unknown service and bad card data (47 ms)
+    √ declined Kaspi payment → retry by card → order paid and auto-confirmed → notifications (349 ms)
+    √ cancelling a paid order refunds it (221 ms)
+
+  console.warn
+    Request #1792690642856: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690642856: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690642856: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+PASS src/modules/orders/orders.e2e.spec.ts
+  Orders E2E
+    Order lifecycle
+      √ should create order from cart (144 ms)
+      √ should list user orders (35 ms)
+      √ should get order detail (19 ms)
+      √ should not allow unauthenticated order access (11 ms)
+      √ should approve order (37 ms)
+      √ should cancel order (136 ms)
+    Order authorization
+      √ should reject order creation without auth (4 ms)
+      √ should reject order list without auth (4 ms)
+
+  console.warn
+    Request #1792690644672: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690644672: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690644672: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.log
+    prisma:error 
+    Invalid `this.prisma.inquiry.findUniqueOrThrow()` invocation in
+    <repo>\apps\api\src\modules\admin\inquiries\inquiries.service.ts:175:32
+    
+      172 
+      173 // ── Find by ID ────────────────────────────────────────────────────
+      174 async findOne(id: string) {
+    → 175   return this.prisma.inquiry.findUniqueOrThrow(
+    An operation failed because it depends on one or more records that were required but not found. No record was found for a query.
+
+      at Object.zc (../../node_modules/.pnpm/@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3/node_modules/@prisma/internals/src/logger.ts:13:11)
+
+[Nest] 26236  - 22.10.2026, 22:37:25   ERROR [ExceptionsHandler] 
+Invalid `this.prisma.inquiry.findUniqueOrThrow()` invocation in
+<repo>\apps\api\src\modules\admin\inquiries\inquiries.service.ts:175:32
+
+  172 
+  173 // ── Find by ID ────────────────────────────────────────────────────
+  174 async findOne(id: string) {
+→ 175   return this.prisma.inquiry.findUniqueOrThrow(
+An operation failed because it depends on one or more records that were required but not found. No record was found for a query.
+PrismaClientKnownRequestError: 
+Invalid `this.prisma.inquiry.findUniqueOrThrow()` invocation in
+<repo>\apps\api\src\modules\admin\inquiries\inquiries.service.ts:175:32
+
+  172 
+  173 // ── Find by ID ────────────────────────────────────────────────────
+  174 async findOne(id: string) {
+→ 175   return this.prisma.inquiry.findUniqueOrThrow(
+An operation failed because it depends on one or more records that were required but not found. No record was found for a query.
+    at ei.handleRequestError (<repo>\node_modules\.pnpm\@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3\node_modules\@prisma\client\src\runtime\RequestHandler.ts:228:13)
+    at ei.handleAndLogRequestError (<repo>\node_modules\.pnpm\@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3\node_modules\@prisma\client\src\runtime\RequestHandler.ts:174:12)
+    at ei.request (<repo>\node_modules\.pnpm\@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3\node_modules\@prisma\client\src\runtime\RequestHandler.ts:143:12)
+    at a (<repo>\node_modules\.pnpm\@prisma+client@6.19.3_prisma@6.19.3_typescript@5.9.3__typescript@5.9.3\node_modules\@prisma\client\src\runtime\getPrismaClient.ts:833:24)
+PASS src/modules/admin/inquiries/inquiries.e2e.spec.ts
+  Inquiries E2E
+    POST /api/v1/admin/inquiries/public (public submit)
+      √ should accept public inquiry without auth (17 ms)
+      √ should return 400 without company name (18 ms)
+      √ should return 400 without contact name (7 ms)
+      √ should return 400 without phone (6 ms)
+      √ should return 400 without email (6 ms)
+      √ should accept inquiry with items (26 ms)
+    Admin CRUD (authenticated)
+      √ GET /admin/inquiries — should list inquiries (26 ms)
+      √ GET /admin/inquiries/stats — should return stats (57 ms)
+      √ GET /admin/inquiries/:id — should return single inquiry (11 ms)
+      √ PUT /admin/inquiries/:id — should update inquiry (18 ms)
+      √ PUT /admin/inquiries/:id — should update items (14 ms)
+      √ DELETE /admin/inquiries/:id — should delete inquiry (13 ms)
+      √ GET /admin/inquiries/:id — should return error after delete (232 ms)
+    Authorization
+      √ should reject public access to admin list (4 ms)
+      √ should reject public access to admin stats (4 ms)
+
+  console.warn
+    Request #1792690646505: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690646505: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690646505: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+PASS src/modules/cart/cart.e2e.spec.ts
+  Cart E2E
+    Guest cart
+      √ should add item to guest cart (47 ms)
+      √ should get guest cart (10 ms)
+      √ should update item quantity (31 ms)
+      √ should clear guest cart (26 ms)
+    Authenticated cart
+      √ should add item to authenticated cart (34 ms)
+      √ should get authenticated cart (12 ms)
+      √ should validate cart before checkout (4 ms)
+      √ should remove item from cart (27 ms)
+
+  console.warn
+    Request #1792690648083: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690648083: Sleeping for 0.1s and then retrying request...
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:485:23
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+  console.warn
+    Request #1792690648083: Request to Node 0 failed due to "ECONNREFUSED "
+
+      at ../../node_modules/.pnpm/typesense@3.0.6_@babel+runtime@7.29.7/node_modules/typesense/src/Typesense/ApiCall.ts:466:21
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:196:27)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at step (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:181:143)
+      at Object.throw (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:177:57)
+      at rejected (../../node_modules/.pnpm/tslib@2.8.1/node_modules/tslib/tslib.js:168:69)
+
+PASS src/modules/products/products.e2e.spec.ts
+  Products E2E
+    GET /api/v1/products
+      √ should return paginated products (67 ms)
+      √ should respect limit parameter (23 ms)
+      √ should support search query (71 ms)
+      √ should support brand filtering (11 ms)
+      √ should support sorting by price (29 ms)
+      √ should return 400 for invalid limit (12 ms)
+    GET /api/v1/products/:id
+      √ should return 404 for non-existent product (8 ms)
+      √ should return product detail with relations (26 ms)
+
+Test Suites: 6 passed, 6 total
+Tests:       64 passed, 64 total
+Snapshots:   0 total
+Time:        18.062 s, estimated 21 s
+Ran all test suites.

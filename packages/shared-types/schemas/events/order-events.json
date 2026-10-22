@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synteco.kz/events/order-events.json",
+  "title": "OrderDomainEvents",
+  "definitions": {
+    "OrderSubmitted": {
+      "type": "object",
+      "required": ["type", "orderId", "orderNumber", "customerId", "items", "total", "timestamp"],
+      "properties": {
+        "type": { "const": "order.submitted" },
+        "orderId": { "type": "string", "format": "uuid" },
+        "orderNumber": { "type": "string", "pattern": "^SO-\\d{4}-\\d{5}$" },
+        "customerId": { "type": "string", "format": "uuid" },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["productId", "quantity", "unitPrice"],
+            "properties": {
+              "productId": { "type": "string", "format": "uuid" },
+              "variantId": { "type": "string" },
+              "quantity": { "type": "integer", "minimum": 1 },
+              "unitPrice": { "$ref": "schemas/common/money.json" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "total": { "$ref": "schemas/common/money.json" },
+        "notes": { "type": "string", "nullable": true },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "OrderStatusChanged": {
+      "type": "object",
+      "required": ["type", "orderId", "fromStatus", "toStatus", "timestamp"],
+      "properties": {
+        "type": { "const": "order.status.changed" },
+        "orderId": { "type": "string", "format": "uuid" },
+        "fromStatus": { "type": "string", "enum": ["pending", "confirmed", "processing", "picking", "packed", "shipped", "delivered", "cancelled", "returned"] },
+        "toStatus": { "type": "string", "enum": ["pending", "confirmed", "processing", "picking", "packed", "shipped", "delivered", "cancelled", "returned"] },
+        "actor": { "type": "string", "nullable": true, "description": "User ID or 'system'" },
+        "comment": { "type": "string", "nullable": true },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

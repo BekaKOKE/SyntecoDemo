@@ -1,0 +1,162 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+.next/
+build/
+.turbo/
+
+# Generated TypeScript cache (Next.js / TS)
+**/next-env.d.ts
+**/tsconfig.tsbuildinfo
+
+# Windows reserved filename artifact
+nul
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+.env.production
+.env.prod
+# never commit real production env, keep only *.example
+!.env.example
+!*.env.example
+
+# Deploy secrets (real values live in deploy/.deploy.env, git-ignored)
+deploy/.deploy.env
+
+# Database
+prisma/migrations/*/migration_lock.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# Obsidian
+.brain/
+.obsidian/workspace.json
+brain/**/.obsidian/workspace.json
+brain/**/.obsidian/graph.json
+brain/**/.obsidian/app.json
+brain/**/.obsidian/appearance.json
+brain/**/.obsidian/core-plugins.json
+
+# Data files (large)
+data/*.csv
+data/*.json
+
+# Logs
+*.log
+logs/
+
+# Session transcripts (Claude Code, etc.)
+**/20[2-9][0-9]-[0-1][0-9]-[0-3][0-9]-*.txt
+conversationdeploy.txt
+conversation*.txt
+
+# Loose SQL files at app root (not Prisma migrations)
+/apps/api/migration.sql
+/apps/api/seed.sql
+
+# Docker
+infra/docker/data/
+
+# Database files
+*.db
+*.db-journal
+*.db-wal
+
+# Claude
+.claude/settings.local.json
+
+# Screenshots / uploads (large reference files)
+Synteco/screenshots/
+Synteco/uploads/
+
+# Mobile audit test output (scripts committed, artifacts ignored)
+apps/web/test-mobile/*.png
+apps/web/test-mobile/*.json
+apps/web/test-mobile/package*.json
+
+# Generated (committed)
+# packages/shared-types/generated/ — DO commit generated types
+
+# временные файлы, помеченные на удаление
+_to_delete/
+
+# ═══════════════════════════════════════════════════════════════════
+# Synteco Demo (course project) — production-only or private material
+# that is NOT part of the submitted repository.
+# ═══════════════════════════════════════════════════════════════════
+# production deployment, server ops, DNS, nginx, backups
+deploy/
+docker-compose.prod.yml
+infra/backup/
+infra/dns/
+infra/nginx/
+infra/docker/docker-compose.yml
+infra/docker/README.md
+# 1C / data pipelines (need production credentials, not used by the demo)
+services/
+# internal notes, AI-assistant workspaces, IDE
+brain/
+docs/superpowers/
+docs/prototype-cdn/
+docs/legal/
+docs/VERIFY_LIST.md
+.claude/
+.claude-flow/
+.superpowers/
+.idea/
+/CODEX_HANDOFF.md
+/CHAT_HANDOFF_FRONTEND_TO_ADMIN.txt
+/PROJECT_REPORT_*.md
+/FIXES_APPLIED.md
+/SECURITY.md
+# database dumps and one-off maintenance scripts
+*.sql.gz
+/synteco_backup.sql
+/count-products.sql
+/test-catalog.ps1
+/1.png
+/2.png
+/3.png
+apps/api/*.txt
+apps/api/audit-*.js
+apps/api/check-one.js
+apps/api/classify-products.js
+apps/api/cleanup-round2.js
+apps/api/debug-categories.js
+apps/api/final-cleanup.js
+apps/api/inspect-siz.js
+apps/api/fix_warehouses.ts
+apps/api/migration.sql
+apps/api/seed.sql
+apps/api/services/
+apps/api/uploads/
+apps/api/test-results/
+apps/web/test-mobile/prod-smoke.mjs
+apps/web/src/lib/strip-html.ts.broken
+**/__pycache__/
+.github/workflows/security.yml
+agentdb.rvf*
+apps/api/scripts/*.sql
+apps/api/.env.production.example
+apps/web/test-mobile/

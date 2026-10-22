@@ -1,0 +1,59 @@
+# Synteco Demo — infrastructure for local run (course project)
+# Start: docker compose up -d
+# Stop:  docker compose down
+# Wipe:  docker compose down -v
+#
+# Uses its own compose project name, container names, volumes and ports so it
+# never collides with any other Synteco environment on the same machine.
+
+name: synteco-demo
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: synteco-demo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: synteco
+      POSTGRES_PASSWORD: synteco_dev
+      POSTGRES_DB: synteco
+    ports:
+      - "5434:5432"
+    volumes:
+      - demo_postgres_data:/var/lib/postgresql/data
+      - ./infra/docker/init-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    command: >
+      postgres
+      -c shared_preload_libraries=pg_stat_statements
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synteco"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: synteco-demo-redis
+    restart: unless-stopped
+    ports:
+      - "6381:6379"
+    command: redis-server --requirepass synteco_redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "synteco_redis", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  typesense:
+    image: typesense/typesense:26.0
+    container_name: synteco-demo-typesense
+    restart: unless-stopped
+    ports:
+      - "8109:8108"
+    volumes:
+      - demo_typesense_data:/data
+    command: --data-dir=/data --api-key=synteco_dev_key --enable-cors
+
+volumes:
+  demo_postgres_data:
+  demo_typesense_data:

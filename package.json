@@ -1,0 +1,36 @@
+{
+  "name": "synteco-demo",
+  "private": true,
+  "description": "Synteco Demo — e-commerce course project (Strategy, Adapter, Decorator) built on the Synteco B2B store",
+  "scripts": {
+    "demo:env": "node -e \"const fs=require('fs');const t='apps/api/.env';if(!fs.existsSync(t)){fs.copyFileSync('apps/api/.env.example',t);console.log('created '+t)}else{console.log(t+' already exists')}\"",
+    "demo:setup": "pnpm demo:env && docker compose up -d --wait && pnpm --filter @synteco/api db:demo",
+    "demo:reset": "docker compose down -v && pnpm demo:setup",
+    "dev:api": "pnpm --filter @synteco/api dev",
+    "dev:web": "pnpm --filter @synteco/web dev",
+    "dev:admin": "pnpm --filter @synteco/admin dev",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "typecheck": "turbo typecheck",
+    "db:migrate": "turbo db:migrate",
+    "db:seed": "turbo db:seed",
+    "db:studio": "pnpm --filter @synteco/api exec prisma studio",
+    "generate:types": "pnpm --filter @synteco/shared-types generate",
+    "clean": "turbo clean",
+    "format": "prettier --write .",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.0",
+    "turbo": "^2.3.0",
+    "typescript": "^5.5.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

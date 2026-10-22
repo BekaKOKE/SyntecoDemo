@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.synteco.kz/events/inventory-events.json",
+  "title": "InventoryDomainEvents",
+  "definitions": {
+    "StockChanged": {
+      "type": "object",
+      "required": ["type", "productId", "warehouseId", "quantityBefore", "quantityAfter", "changeType", "timestamp"],
+      "properties": {
+        "type": { "const": "inventory.stock.changed" },
+        "productId": { "type": "string", "format": "uuid" },
+        "warehouseId": { "type": "string", "format": "uuid" },
+        "quantityBefore": { "type": "integer", "minimum": 0 },
+        "quantityAfter": { "type": "integer", "minimum": 0 },
+        "reservedBefore": { "type": "integer", "minimum": 0 },
+        "reservedAfter": { "type": "integer", "minimum": 0 },
+        "changeType": { "type": "string", "enum": ["manual_adjustment", "order_reservation", "order_release", "transfer_in", "transfer_out", "return", "damage", "1c_sync"] },
+        "reference": { "type": "string", "nullable": true, "description": "Order ID, transfer ID, etc." },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "LowStockAlert": {
+      "type": "object",
+      "required": ["type", "productId", "warehouseId", "currentQuantity", "reorderPoint", "timestamp"],
+      "properties": {
+        "type": { "const": "inventory.low_stock" },
+        "productId": { "type": "string", "format": "uuid" },
+        "variantId": { "type": "string" },
+        "title": { "type": "string" },
+        "warehouseId": { "type": "string", "format": "uuid" },
+        "warehouseName": { "type": "string" },
+        "currentQuantity": { "type": "integer" },
+        "reorderPoint": { "type": "integer" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

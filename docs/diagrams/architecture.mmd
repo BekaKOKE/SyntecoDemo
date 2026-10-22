@@ -1,0 +1,46 @@
+flowchart TB
+  subgraph Presentation["Presentation layer"]
+    WEB["apps/web — Next.js storefront<br/>catalogue · cart · checkout · account · notifications"]
+    ADM["apps/admin — Next.js admin panel<br/>orders · promotions · products · CRM"]
+  end
+
+  subgraph API["apps/api — NestJS (REST /api/v1)"]
+    direction TB
+    CTRL["Controllers + DTO validation<br/>(class-validator, guards: JWT · Roles · CSRF)"]
+    subgraph BL["Business logic layer (services)"]
+      ORD["OrdersService"]
+      PROMO["PromotionsService"]
+      PAY["PaymentsService"]
+      NOTIF["NotificationsService"]
+      CART["CartService · InventoryService · PricingService · ProductsService · AuthService"]
+    end
+    subgraph PAT["Pattern components"]
+      STR["Strategy: DiscountStrategy ×4<br/>+ DiscountStrategyRegistry"]
+      DEC["Decorator: OrderCost + 4 service decorators<br/>Notifier + 3 channel decorators"]
+      ADP["Adapter: PaymentGateway ←<br/>KaspiPayAdapter · HalykCardAdapter"]
+    end
+    DAL["Data access layer — PrismaClient (PrismaModule)"]
+  end
+
+  subgraph Ext["Simulated third-party SDKs (not modified)"]
+    KSDK["KaspiPayClient"]
+    HSDK["HalykEpayGateway"]
+  end
+
+  DB[("PostgreSQL 16<br/>schemas: product · commerce · customer · crm · audit")]
+  MAIL["SMTP (optional) / log"]
+  WS["Socket.IO /events"]
+
+  WEB -- "HTTPS JSON (Next.js rewrite /api → :3000)" --> CTRL
+  ADM -- "HTTPS JSON" --> CTRL
+  CTRL --> ORD & PROMO & PAY & NOTIF & CART
+  ORD --> PROMO & PAY & NOTIF & CART
+  PROMO --> STR
+  ORD --> DEC
+  NOTIF --> DEC
+  PAY --> ADP
+  ADP --> KSDK & HSDK
+  ORD & PROMO & PAY & NOTIF & CART --> DAL
+  DAL --> DB
+  DEC -. email .-> MAIL
+  DEC -. push .-> WS

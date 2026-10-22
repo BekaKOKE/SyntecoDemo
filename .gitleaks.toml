@@ -1,0 +1,21 @@
+# Gitleaks config for Synteco.
+# Run locally:   gitleaks detect --config .gitleaks.toml --no-banner
+# In CI it blocks commits/PRs that introduce secrets.
+
+title = "Synteco gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Files that legitimately contain placeholder secrets"
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.production\.example$''',
+  '''deploy/\.deploy\.env\.example$''',
+]
+regexes = [
+  '''<GENERATE[_A-Z]*>''',
+  '''chang(e|eme).*''',
+  '''your\.server\.ip''',
+]
