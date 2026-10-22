@@ -6,6 +6,8 @@
     "demo:env": "node -e \"const fs=require('fs');const t='apps/api/.env';if(!fs.existsSync(t)){fs.copyFileSync('apps/api/.env.example',t);console.log('created '+t)}else{console.log(t+' already exists')}\"",
     "demo:setup": "pnpm demo:env && docker compose up -d --wait && pnpm --filter @synteco/api db:demo",
     "demo:reset": "docker compose down -v && pnpm demo:setup",
+    "demo:build": "turbo run build --filter=@synteco/api --filter=@synteco/web --filter=@synteco/admin",
+    "demo:start": "turbo run start --filter=@synteco/api --filter=@synteco/web --filter=@synteco/admin",
     "dev:api": "pnpm --filter @synteco/api dev",
     "dev:web": "pnpm --filter @synteco/web dev",
     "dev:admin": "pnpm --filter @synteco/admin dev",

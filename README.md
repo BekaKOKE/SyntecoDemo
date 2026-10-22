@@ -20,9 +20,11 @@ Requirements: **Node.js ≥ 20**, **pnpm 9**, **Docker** with Compose v2.
 git clone https://github.com/BekaKOKE/SyntecoDemo.git
 cd SyntecoDemo
 pnpm install
-pnpm demo:setup      # .env, PostgreSQL/Redis/Typesense in Docker, migrations, catalogue, demo data
-pnpm dev             # API :3000 · storefront :3001 · admin :3002
+pnpm demo:setup      # .env, PostgreSQL + Redis in Docker, migrations, catalogue, demo data
+pnpm dev             # API :3000 · storefront :3001 · admin :3002 (development mode)
 ```
+
+**Low-memory / presentation mode (recommended on Windows):** after `pnpm install` and `pnpm demo:setup`, double-click **`start-demo.cmd`**. It checks Docker, starts the database, builds the apps on first run and serves them in production mode (about 300 MB of RAM instead of ~2.5 GB in dev mode). The same from a terminal: `pnpm demo:build` once, then `pnpm demo:start`.
 
 | App | URL | Login |
 |---|---|---|
@@ -93,7 +95,7 @@ Layers: **presentation** (web, admin) → **business logic** (NestJS services + 
 ├── packages/                shared-api-client, shared-types
 ├── infra/docker/init-db.sql PostgreSQL extensions + schemas
 ├── docs/                    documentation A–E, diagrams, screenshots, test results
-└── docker-compose.yml       PostgreSQL · Redis · Typesense for the demo
+└── docker-compose.yml       PostgreSQL · Redis for the demo (search falls back to PostgreSQL)
 ```
 `*` = added in this project.
 

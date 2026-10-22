@@ -9,7 +9,7 @@
 | Node.js | 20 or newer (tested with 24) | `node -v` |
 | pnpm | 9.x | `pnpm -v` (install: `npm i -g pnpm@9` or `corepack enable`) |
 | Docker Desktop / Docker Engine with Compose v2 | any recent | `docker compose version` |
-| Free ports | 3000 (API), 3001 (shop), 3002 (admin), 5434 (PostgreSQL), 6381 (Redis), 8109 (Typesense) | |
+| Free ports | 3000 (API), 3001 (shop), 3002 (admin), 5434 (PostgreSQL), 6381 (Redis) | |
 
 ### 1.2 First start (about 5 minutes)
 
@@ -24,8 +24,10 @@ pnpm dev                # starts API :3000, storefront :3001, admin :3002
 `pnpm demo:setup` performs these steps:
 
 1. Copies `apps/api/.env.example` → `apps/api/.env`. The defaults match `docker-compose.yml`, so no editing is needed.
-2. Starts PostgreSQL 16, Redis and Typesense in Docker (compose project `synteco-demo`) and waits until they are healthy.
+2. Starts PostgreSQL 16 and Redis in Docker (compose project `synteco-demo`) and waits until they are healthy.
 3. Runs `prisma migrate deploy`, loads `apps/api/prisma/demo-data/catalog.sql`, and runs `prisma/seed-demo.ts`.
+
+**Presentation / low-memory mode.** Development mode recompiles pages on demand and needs ~2.5 GB of RAM. For a demo, use production mode instead: double-click `start-demo.cmd` in the project folder (Windows), or run `pnpm demo:build` once and then `pnpm demo:start`. It uses about 300 MB.
 
 If you prefer three terminals instead of `pnpm dev`:
 
@@ -49,8 +51,9 @@ pnpm dev:admin    # http://localhost:3002  admin panel
 
 | Symptom | Fix |
 |---|---|
-| `port is already allocated` when starting Docker | Another program uses 5434/6381/8109. Change the left-hand port in `docker-compose.yml` and the matching value in `apps/api/.env`. |
+| `port is already allocated` when starting Docker | Another program uses 5434/6381. Change the left-hand port in `docker-compose.yml` and the matching value in `apps/api/.env`. |
 | Storefront catalogue is empty or shows loading errors | The API is not running or the DB is empty. Start `pnpm dev:api` and run `pnpm --filter @synteco/api db:demo`. |
+| “Jest worker encountered … child process exceptions” on category/brand pages | The dev server ran out of memory. Close it, free memory and use `start-demo.cmd` / `pnpm demo:start` (production mode). |
 | Page keeps reloading in dev mode / “Next.js package not found” | Stop the dev server, delete `apps/web/.next` (or `apps/admin/.next`) and start it again. |
 | Emails are not delivered | Expected. Email is simulated and logged unless `SMTP_HOST/USER/PASS` are set in `apps/api/.env`. |
 

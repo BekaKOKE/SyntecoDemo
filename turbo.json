@@ -1,28 +1,47 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["packages/shared-types/generated/**"],
+  "globalDependencies": [
+    "packages/shared-types/generated/**"
+  ],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "^generate"],
-      "outputs": ["dist/**", ".next/**", "build/**"]
+      "dependsOn": [
+        "^build",
+        "^generate"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "build/**"
+      ]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["^generate"]
+      "dependsOn": [
+        "^generate"
+      ]
     },
     "lint": {},
     "test": {},
     "typecheck": {
-      "dependsOn": ["^generate"]
+      "dependsOn": [
+        "^generate"
+      ]
     },
     "generate": {
-      "outputs": ["generated/**"]
+      "outputs": [
+        "generated/**"
+      ]
     },
     "db:migrate": {},
     "db:seed": {},
     "clean": {
       "cache": false
+    },
+    "start": {
+      "cache": false,
+      "persistent": true
     }
   }
 }

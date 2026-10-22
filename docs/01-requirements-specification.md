@@ -43,7 +43,7 @@ Requirement IDs are referenced from the test documentation (docs/04-testing.md).
 
 ### 4.1 Catalogue
 - **FR-01** The system shall display a product catalogue with categories (tree), brands, descriptions, specifications, prices and stock quantities per warehouse.
-- **FR-02** The system shall support full-text product search with autocomplete (Typesense, with a PostgreSQL fallback).
+- **FR-02** The system shall support full-text product search with autocomplete (PostgreSQL search in the demo; the original Typesense engine is used automatically when it is available).
 - **FR-03** The system shall support filtering by category, brand, availability and price range, sorting, and pagination.
 
 ### 4.2 Cart

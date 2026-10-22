@@ -3,6 +3,9 @@
 # Stop:  docker compose down
 # Wipe:  docker compose down -v
 #
+# Search uses PostgreSQL; Typesense (optional autocomplete engine of the
+# original system) is not started here — the API falls back automatically.
+#
 # Uses its own compose project name, container names, volumes and ports so it
 # never collides with any other Synteco environment on the same machine.
 
@@ -44,16 +47,5 @@ services:
       timeout: 3s
       retries: 5
 
-  typesense:
-    image: typesense/typesense:26.0
-    container_name: synteco-demo-typesense
-    restart: unless-stopped
-    ports:
-      - "8109:8108"
-    volumes:
-      - demo_typesense_data:/data
-    command: --data-dir=/data --api-key=synteco_dev_key --enable-cors
-
 volumes:
   demo_postgres_data:
-  demo_typesense_data:
