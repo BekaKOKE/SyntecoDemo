@@ -1,4 +1,5 @@
 import { apiFetch } from './client';
+import { NOTIFICATIONS_CHANGED } from './notifications';
 
 export type PaymentMethodCode = 'kaspi' | 'halyk_card' | 'bank_invoice' | 'cash_on_delivery';
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
@@ -125,6 +126,12 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethodCode, string> = {
 
 const json = (body: unknown) => ({ method: 'POST', body: JSON.stringify(body) });
 
+/** Order actions create notifications on the server — refresh the header badge. */
+function notificationsChanged<T>(result: T): T {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED));
+  return result;
+}
+
 export const getPaymentMethods = () => apiFetch<PaymentMethod[]>('/payments/methods');
 export const getOrderServices = () => apiFetch<OrderServiceOption[]>('/orders/services');
 
@@ -137,13 +144,13 @@ export const createOrder = (body: {
   services?: string[];
   paymentMethod?: PaymentMethodCode;
   paymentDetails?: Record<string, string>;
-}) => apiFetch<OrderWithPayment>('/orders', json(body));
+}) => apiFetch<OrderWithPayment>('/orders', json(body)).then(notificationsChanged);
 
 export const payOrder = (id: string, paymentMethod: PaymentMethodCode, paymentDetails?: Record<string, string>) =>
-  apiFetch<OrderWithPayment>(`/orders/${id}/pay`, json({ paymentMethod, paymentDetails }));
+  apiFetch<OrderWithPayment>(`/orders/${id}/pay`, json({ paymentMethod, paymentDetails })).then(notificationsChanged);
 
 export const cancelOrder = (id: string, reason: string) =>
-  apiFetch<Order>(`/orders/${id}/cancel`, json({ reason }));
+  apiFetch<Order>(`/orders/${id}/cancel`, json({ reason })).then(notificationsChanged);
 
 export const getOrders = (page = 1, limit = 20) =>
   apiFetch<{ data: Order[]; meta: { page: number; limit: number; total: number; totalPages: number } }>(`/orders?page=${page}&limit=${limit}`);
