@@ -11,7 +11,7 @@ import { ScreenTabs } from '@/components/ScreenTabs';
 import type { ReactNode } from 'react';
 
 function AuthGate({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated, canAccessPanel, loading } = useAuth();
+  const { user, isAuthenticated, canAccessPanel, loading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const isLoginPage = pathname === '/login';
@@ -61,6 +61,18 @@ function AuthGate({ children }: { children: ReactNode }) {
           <div className="muted" style={{ marginTop: 8, fontSize: 13 }}>
             У вашей учётной записи нет прав администратора. Обратитесь к руководителю для получения доступа.
           </div>
+          {user?.email && (
+            <div className="muted" style={{ marginTop: 12, fontSize: 12 }}>
+              Сейчас выполнен вход как <b>{user.email}</b> — это аккаунт покупателя. Для панели нужен аккаунт администратора или менеджера.
+            </div>
+          )}
+          <button
+            className="btn btn-secondary"
+            style={{ marginTop: 20 }}
+            onClick={async () => { await logout(); window.location.href = '/login'; }}
+          >
+            Войти под другой учётной записью
+          </button>
         </div>
       </div>
     );
